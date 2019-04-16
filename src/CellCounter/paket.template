@@ -1,0 +1,29 @@
+type file
+id CellCounter
+title
+    CellCounter
+owners
+    Jonathan Ott
+authors 
+    Jonathan Ott
+projectUrl
+    https://github.com/Joott/CellCounter
+iconUrl
+    https://raw.githubusercontent.com/Joott/CellCounter/master/docs/files/img/logo.png
+licenseUrl
+    https://github.com/Joott/CellCounter/blob/master/LICENSE.txt
+requireLicenseAcceptance
+    false
+language
+    F#
+copyright
+    Copyright 2017
+tags
+    Biology Bioinformatics Cells Counter
+summary
+    An application to automatically count cells using wavelet transformation
+description
+    An application to automatically count cells using wavelet transformation
+
+files
+	../../bin/CellCounter ==> lib
