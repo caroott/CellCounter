@@ -9,6 +9,7 @@ nuget Expecto
 nuget Expecto.BenchmarkDotNet
 nuget Expecto.FsCheck
 nuget Expecto.VisualStudio.TestAdapter version_in_path: true
+nuget Microsoft.Xaml
 
 git https://github.com/CSBiology/FSharpAux.git nuget Packages: /
 nuget FSharpAux
