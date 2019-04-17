@@ -14,7 +14,7 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="CounterFunctions.fs" />
     <None Include="Scripts\Script.fsx" />
     <None Include="paket.references" />
     <None Include="paket.template" />
