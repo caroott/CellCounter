@@ -56,7 +56,7 @@ module Image =
             convertedBitmap.CopyPixels(bytes, width * bytesPerPixel, 0)
             let pixelSize = bytesPerPixel
             Array2D.init width height (fun x y -> 
-                BitConverter.ToInt32 (bytes,stride * y + x * pixelSize) //ToInt16 default
+                BitConverter.ToInt16 (bytes,stride * y + x * pixelSize) //ToInt16 default
                 )
         )
         |> Seq.head
@@ -102,3 +102,55 @@ module Maxima =
                     arrayWithoutPaddingoffset.[(i-paddingoffset),(j-paddingoffset)] <- CWTArray2D0.[i,j]
             arrayWithoutPaddingoffset
         deletePaddingArea
+
+
+    ///gets Marr, a framenumber, an offset and the number of pixels to look at in the surrounding, and gives [,] of localMaxima
+    let inline findLocalMaxima (marr:MarrWavelet.MarrWavelet) frame =   
+        ///gets single 2D Array with only Maxima in it and gives coordinates of local maxima
+        let allmaximaArray (arr:float[,]) =
+            let rec loop acc i j =
+                if i < (Array2D.length1 arr)-1 then
+                    if j < (Array2D.length2 arr)-1  then 
+                        if (arr.[i,j]) > 0. then loop ((float i, float j)::acc) i (j+1) 
+                        else loop acc i (j+1)    
+                    else loop acc (i+1) 0
+                else acc
+            loop [] 0 0 
+        let numberofsurpix = marr.LMdistance
+        let (cWTPercArray: float [,]) = C3DWT marr frame  
+        let arrayOfMaxima = Array2D.zeroCreate ((Array2D.length1 cWTPercArray)) ((Array2D.length2 cWTPercArray))
+        let checkListsForContinuousDecline b c numberofsurpix =      
+            let createSurroundingPixelLists b c numberofsurpix =
+                let rec loop i accN accS accW accE accNW accSW accNE accSE =
+                    let imod = (i |> float) * 0.7071 |> floor |> int
+                    if i <= numberofsurpix then 
+                        loop (i+1) (cWTPercArray.[b+i   ,c     ]::accN )
+                                    (cWTPercArray.[b-i   ,c     ]::accS )
+                                    (cWTPercArray.[b     ,c-i   ]::accW )
+                                    (cWTPercArray.[b     ,c+i   ]::accE )
+                                    (cWTPercArray.[b+imod,c-imod]::accNW)
+                                    (cWTPercArray.[b-imod,c-imod]::accSW)
+                                    (cWTPercArray.[b+imod,c+imod]::accNE)
+                                    (cWTPercArray.[b-imod,c+imod]::accSE)
+                    else [accN;accS;accW;accE;accNW;accSW;accNE;accSE]
+                loop 0 [] [] [] [] [] [] [] [] 
+    
+            let surroundingList = createSurroundingPixelLists b c numberofsurpix
+
+            let rec isSortedAsc (list: float list) = 
+                match list with
+                    | [] -> true
+                    | [x] -> true
+                    | x::((y::_)as t) -> if x > y then false else isSortedAsc(t) 
+            let boolList = surroundingList |> List.map  (fun x -> isSortedAsc x)
+            (boolList |> List.contains false) = false
+
+        //calculates checkListsForContinuousDecline for every pixel
+        for i=numberofsurpix to (Array2D.length1 cWTPercArray)-(numberofsurpix+1) do 
+            for j=numberofsurpix to (Array2D.length2 cWTPercArray)-(numberofsurpix+1) do 
+                if cWTPercArray.[i,j] >= 10. then                              
+                    if checkListsForContinuousDecline i j numberofsurpix = true     
+                        then arrayOfMaxima.[i,j] <- cWTPercArray.[i,j]              
+                    else arrayOfMaxima.[i,j] <- 0.                                  
+                else arrayOfMaxima.[i,j] <- 0.                                   
+        allmaximaArray arrayOfMaxima
