@@ -8,6 +8,7 @@ open System.IO
 open System.Windows.Media
 open System.Windows.Media.Imaging
 open System.Threading
+open System.Collections.Generic
 
 module MarrWavelet =
     type MarrWavelet =  {
@@ -154,3 +155,46 @@ module Maxima =
                     else arrayOfMaxima.[i,j] <- 0.                                  
                 else arrayOfMaxima.[i,j] <- 0.                                   
         allmaximaArray arrayOfMaxima
+
+module Filter =
+
+    let circleCutter (wvPicture: float[,]) (pointA: float * float) (pointB: float * float) =
+        let centerXY        = ((fst pointA + fst pointB)/2.,(snd pointA + snd pointB)/2.)
+        let radius          = (sqrt((fst pointA - fst pointB)**2. + (snd pointA - snd pointB)**2.))/2.
+        let jaggedPicture   = wvPicture |> Array2D.toJaggedArray
+        let cutPicture =    jaggedPicture
+                            |> Array.mapi (fun y -> Array.mapi (fun x value->
+                                let distanceCenter = sqrt ((float x - fst centerXY)**2. + (float y - snd centerXY)**2.)
+                                if distanceCenter > radius then 0.
+                                else value))
+        cutPicture
+
+    let circleCutterAdaptive (wvPicture: float[,]) (horizontalLeft: float * float) (horizontalRight: float * float) (verticalTop: float * float) (verticalBottom: float * float)=
+        let centerXY         = (fst horizontalLeft + ((fst horizontalRight - fst horizontalLeft)/2.)),(snd verticalBottom + ((snd verticalTop - snd verticalBottom)/2.))
+        let radiusHorizontal = (fst horizontalRight - fst horizontalLeft)/2.
+        let radiusVertical   = (snd verticalTop - snd verticalBottom)/2.
+        let jaggedPicture    = wvPicture |> Array2D.toJaggedArray
+        let cutPicture =    jaggedPicture
+                            |> Array.mapi (fun y -> Array.mapi (fun x value->
+                                let distanceHorizontal = abs (float x - fst centerXY)
+                                let distanceVertical = abs (float y - snd centerXY)
+                                let distanceCenter = sqrt ((float x - fst centerXY)**2. + (float y - snd centerXY)**2.)
+                                let adaptedRadius = (distanceHorizontal * radiusHorizontal + distanceVertical * radiusVertical) / (distanceHorizontal + distanceVertical)
+                                    //if distanceHorizontal > distanceVertical then
+                                    //    let multiplier = distanceVertical / distanceHorizontal
+                                    //    let radius     = multiplier * radiusHorizontal + (1. - multiplier) * radiusVertical
+                                    //    radius
+                                    //else
+                                    //    let multiplier = distanceHorizontal / distanceVertical
+                                    //    let radius     = multiplier * radiusVertical + (1. - multiplier) * radiusHorizontal
+                                    //    radius
+                                if distanceCenter > adaptedRadius then 
+                                    100000000.
+                                else 
+                                    value))
+        cutPicture
+
+    let threshold (transf: float[][]) =
+        let max = Array.average (Array.map (fun x -> Array.max x) transf)
+        transf
+        |> Array.map (Array.map (fun x -> if x < (0.5 * max) then 0. else x))
