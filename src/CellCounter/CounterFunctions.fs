@@ -194,7 +194,8 @@ module Filter =
                                     value))
         cutPicture
 
-    let threshold (transf: float[][]) =
-        let max = Array.average (Array.map (fun x -> Array.max x) transf)
+    let threshold (transf: float[][]) (percentileValue: float) =
+        let percentile = transf |> Array.concat |> Array.sort
+        let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
         transf
-        |> Array.map (Array.map (fun x -> if x < (0.5 * max) then 0. else x))
+        |> JaggedArray.map (fun x -> if x < cutOffValue then 0. else x)
