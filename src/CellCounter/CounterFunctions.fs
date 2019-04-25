@@ -106,7 +106,7 @@ module Maxima =
 
 
     ///gets Marr, a framenumber, an offset and the number of pixels to look at in the surrounding, and gives [,] of localMaxima
-    let inline findLocalMaxima (marr:MarrWavelet.MarrWavelet) frame =   
+    let inline findLocalMaxima dist frame =   
         ///gets single 2D Array with only Maxima in it and gives coordinates of local maxima
         let allmaximaArray (arr:float[,]) =
             let rec loop acc i j =
@@ -117,15 +117,15 @@ module Maxima =
                     else loop acc (i+1) 0
                 else acc
             loop [] 0 0 
-        let numberofsurpix = marr.LMdistance
-        let (cWTPercArray: float [,]) = C3DWT marr frame  
+        let numberofsurpix = dist
+        let (cWTPercArray: float [,]) = frame  
         let arrayOfMaxima = Array2D.zeroCreate ((Array2D.length1 cWTPercArray)) ((Array2D.length2 cWTPercArray))
         let checkListsForContinuousDecline b c numberofsurpix =      
             let createSurroundingPixelLists b c numberofsurpix =
                 let rec loop i accN accS accW accE accNW accSW accNE accSE =
                     let imod = (i |> float) * 0.7071 |> floor |> int
                     if i <= numberofsurpix then 
-                        loop (i+1) (cWTPercArray.[b+i   ,c     ]::accN )
+                        loop (i+1)  (cWTPercArray.[b+i   ,c     ]::accN )
                                     (cWTPercArray.[b-i   ,c     ]::accS )
                                     (cWTPercArray.[b     ,c-i   ]::accW )
                                     (cWTPercArray.[b     ,c+i   ]::accE )
