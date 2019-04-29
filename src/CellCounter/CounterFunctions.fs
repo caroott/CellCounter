@@ -84,25 +84,31 @@ module Image =
 module Maxima =
 
     let inline C3DWT (marr: MarrWavelet.MarrWavelet) (frame:'a[,]) =   
-        let resolutionPixel = (Array2D.length1 frame) - 40 * 2
+        printfn "frame:\t%i\t%i" (Array2D.length1 frame) (Array2D.length2 frame)
+        let resolutionPixelfst = (Array2D.length1 frame) - 40 * 2
+        let resolutionPixelsnd = (Array2D.length2 frame) - 40 * 2
         let offset = marr.PadAreaRadius
         let paddingoffset = 40
         let (CWTArray2D0: float[,]) = Array2D.zeroCreate (Array2D.length1 frame) (Array2D.length2 frame)
-        for x = paddingoffset to (paddingoffset + (resolutionPixel-1)) do
-            for y = paddingoffset to (paddingoffset + (resolutionPixel-1)) do
+        printfn "ctwarr:\t%i\t%i" (Array2D.length1 CWTArray2D0) (Array2D.length2 CWTArray2D0)
+        for x = paddingoffset to (paddingoffset + (resolutionPixelfst-1)) do
+            //printfn "x: %i" x
+            for y = paddingoffset to (paddingoffset + (resolutionPixelsnd-1)) do
+                //printfn "y: %i" y
                 CWTArray2D0.[x,y] <-
-                    let mutable acc = 0.
+                    let mutable acc = 0.                                       
                     for a = 0 to 2*offset do
-                        for b = 0 to 2*offset do
+                        for b = 0 to 2*offset do               
                             acc <- acc + ((marr.Values).[a,b] * (frame.[(y+(a-offset)),(x+(b-offset))] |> float))
                     acc
-        let deletePaddingArea =
-            let arrayWithoutPaddingoffset = Array2D.zeroCreate ((Array2D.length1 CWTArray2D0)-(2*paddingoffset)) ((Array2D.length2 CWTArray2D0)-(2*paddingoffset))
-            for i=paddingoffset to (Array2D.length1 CWTArray2D0)-(paddingoffset+1) do
-                for j=paddingoffset to (Array2D.length2 CWTArray2D0)-(paddingoffset+1) do
-                    arrayWithoutPaddingoffset.[(i-paddingoffset),(j-paddingoffset)] <- CWTArray2D0.[i,j]
-            arrayWithoutPaddingoffset
-        deletePaddingArea
+        //let deletePaddingArea =
+        //    let arrayWithoutPaddingoffset = Array2D.zeroCreate ((Array2D.length1 CWTArray2D0)-(2*paddingoffset)) ((Array2D.length2 CWTArray2D0)-(2*paddingoffset))
+        //    for i=paddingoffset to (Array2D.length1 CWTArray2D0)-(paddingoffset+1) do
+        //        for j=paddingoffset to (Array2D.length2 CWTArray2D0)-(paddingoffset+1) do
+        //            arrayWithoutPaddingoffset.[(i-paddingoffset),(j-paddingoffset)] <- CWTArray2D0.[i,j]
+        //    arrayWithoutPaddingoffset
+        //deletePaddingArea
+        CWTArray2D0
 
 
     ///gets Marr, a framenumber, an offset and the number of pixels to look at in the surrounding, and gives [,] of localMaxima
