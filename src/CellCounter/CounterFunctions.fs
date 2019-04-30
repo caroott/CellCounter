@@ -160,7 +160,7 @@ module Maxima =
 
 module Filter =
 
-    let circleSelector (wvPicture: float[,]) (pointA: float * float) (pointB: float * float) =
+    let circleSelector (wvPicture: float[,]) (pointAXY: float * float) (pointBXY: float * float) =
         let centerXY        = ((fst pointA + fst pointB)/2.,(snd pointA + snd pointB)/2.)
         let radius          = (sqrt((fst pointA - fst pointB)**2. + (snd pointA - snd pointB)**2.))/2.
         let jaggedPicture   = wvPicture |> Array2D.toJaggedArray
@@ -170,6 +170,21 @@ module Filter =
                                 if distanceCenter > radius then 0.
                                 else value))
         cutPicture
+
+    let rectangleSelector (wvPicture: float[,]) (upperLeftXY: int * int) (lowerRightXY: int * int) =
+        let upperY = snd upperLeftXY
+        let lowerY = snd lowerRightXY
+        let leftX  = fst upperLeftXY
+        let rightX = fst lowerRightXY
+        let jaggedPicture = wvPicture |> Array2D.toJaggedArray
+        let selectPicture =
+            jaggedPicture
+            |> Array.mapi 
+                (fun y -> Array.mapi (fun x value->
+                    if      y > upperY || y < lowerY then 0.
+                    elif    x > rightX || x < leftX then 0.
+                    else    value))
+        selectPicture
 
     let threshold (transf: float[][]) (percentileValue: float) =
         let percentile = transf |> Array.concat |> Array.sort
