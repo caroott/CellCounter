@@ -93,11 +93,15 @@ module Maxima =
         for x = paddingoffset to (paddingoffset + (resolutionPixelsnd-1)) do
             for y = paddingoffset to (paddingoffset + (resolutionPixelfst-1)) do
                 CWTArray2D0.[x,y] <-
-                    let mutable acc = 0.
-                    for a = 0 to 2*offset do
-                        for b = 0 to 2*offset do
-                            acc <- acc + ((marr.Values).[a,b] * (frame.[(y+(a-offset)),(x+(b-offset))] |> float))
-                    acc
+                    let rec loop acc' a b =
+                        if a <= 2 * offset then
+                            if b <= 2 * offset then
+                                let acc = acc' + ((marr.Values).[a,b] * (frame.[(y+(a-offset)),(x+(b-offset))] |> float))
+                                loop acc a (b + 1)
+                            else
+                                loop acc' (a + 1) 0
+                        else acc'
+                    loop 0. 0 0
         let deletePaddingArea =
             let arrayWithoutPaddingoffset = Array2D.zeroCreate ((Array2D.length1 CWTArray2D0)-(2*paddingoffset)) ((Array2D.length2 CWTArray2D0)-(2*paddingoffset))
             for i=paddingoffset to (Array2D.length1 CWTArray2D0)-(paddingoffset+1) do
@@ -161,8 +165,8 @@ module Maxima =
 module Filter =
 
     let circleSelector (wvPicture: float[,]) (pointAXY: float * float) (pointBXY: float * float) =
-        let centerXY        = ((fst pointA + fst pointB)/2.,(snd pointA + snd pointB)/2.)
-        let radius          = (sqrt((fst pointA - fst pointB)**2. + (snd pointA - snd pointB)**2.))/2.
+        let centerXY        = ((fst pointAXY + fst pointBXY)/2.,(snd pointAXY + snd pointBXY)/2.)
+        let radius          = (sqrt((fst pointAXY - fst pointBXY)**2. + (snd pointAXY - snd pointBXY)**2.))/2.
         let jaggedPicture   = wvPicture |> Array2D.toJaggedArray
         let cutPicture =    jaggedPicture
                             |> Array.mapi (fun y -> Array.mapi (fun x value->
