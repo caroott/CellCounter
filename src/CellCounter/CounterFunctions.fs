@@ -160,7 +160,7 @@ module Maxima =
 
 module Filter =
 
-    let circleCutter (wvPicture: float[,]) (pointA: float * float) (pointB: float * float) =
+    let circleSelector (wvPicture: float[,]) (pointA: float * float) (pointB: float * float) =
         let centerXY        = ((fst pointA + fst pointB)/2.,(snd pointA + snd pointB)/2.)
         let radius          = (sqrt((fst pointA - fst pointB)**2. + (snd pointA - snd pointB)**2.))/2.
         let jaggedPicture   = wvPicture |> Array2D.toJaggedArray
