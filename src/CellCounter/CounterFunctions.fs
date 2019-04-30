@@ -83,24 +83,18 @@ module Image =
 
 module Maxima =
 
-    let inline C3DWT (marr: MarrWavelet.MarrWavelet) (frame:'a[,]) =   
-        printfn "frame:\t%i\t%i" (Array2D.length1 frame) (Array2D.length2 frame)
+    let inline C3DWT (marr: MarrWavelet.MarrWavelet) (frame:'a[,]) =
         let resolutionPixelfst = (Array2D.length1 frame) - (40 * 2)
         let resolutionPixelsnd = (Array2D.length2 frame) - (40 * 2)
         let offset = marr.PadAreaRadius
         let paddingoffset = 40
         let (CWTArray2D0: float[,]) = Array2D.zeroCreate (Array2D.length2 frame) (Array2D.length1 frame)
-        printfn "ctwarr:\t%i\t%i" (Array2D.length1 CWTArray2D0) (Array2D.length2 CWTArray2D0)
         for x = paddingoffset to (paddingoffset + (resolutionPixelsnd-1)) do
-            printfn "x: %i" x
             for y = paddingoffset to (paddingoffset + (resolutionPixelfst-1)) do
-                printfn "y: %i" y
                 CWTArray2D0.[x,y] <-
-                    let mutable acc = 0.                                       
+                    let mutable acc = 0.
                     for a = 0 to 2*offset do
-                        if x > 1105 then printfn "checkp a:%i" a
-                        for b = 0 to 2*offset do               
-                            if x > 1105 then printfn "checkp 2 b:%i" b
+                        for b = 0 to 2*offset do
                             acc <- acc + ((marr.Values).[a,b] * (frame.[(y+(a-offset)),(x+(b-offset))] |> float))
                     acc
         let deletePaddingArea =
