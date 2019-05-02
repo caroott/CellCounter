@@ -190,8 +190,15 @@ module Filter =
                     else    value))
         selectPicture
 
-    let threshold (transf: float[][]) (percentileValue: float) =
-        let percentile = transf |> Array.concat |> Array.sort
-        let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
-        transf
-        |> JaggedArray.map (fun x -> if x < cutOffValue then 0. else x)
+    let threshold (transf: float[][]) (percentileValue: float) (maximaPositive: bool) =
+
+        if maximaPositive then 
+            let percentile = transf |> Array.concat |> Array.sort
+            let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
+            transf
+            |> JaggedArray.map (fun x -> if x < cutOffValue then 0. else x)
+        else
+            let percentile = transf |> Array.concat |> Array.sortDescending
+            let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
+            transf
+            |> JaggedArray.map (fun x -> if x > cutOffValue then 0. else x)
