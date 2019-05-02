@@ -3,6 +3,7 @@ namespace CounterFunctions
 
 open FSharpAux
 open FSharp.Stats
+open FSharp.Collections
 open System
 open System.IO
 open System.Windows.Media
@@ -201,4 +202,4 @@ module Filter =
             let percentile = transf |> Array.concat |> Array.sortDescending
             let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
             transf
-            |> JaggedArray.map (fun x -> if x > cutOffValue then 0. else x)
+            |> JaggedArray.map (fun x -> if x > cutOffValue then 0. else -x)
