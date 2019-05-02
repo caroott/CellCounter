@@ -48,8 +48,8 @@ module Image =
                     BitmapCacheOption.None);   
         Seq.init (tiffDecoder.Frames.Count) (fun frameIndex ->
             let cFrame = tiffDecoder.Frames.[frameIndex]
-            let bytesPerPixel = cFrame.Format.BitsPerPixel / 8
-            let convertedBitmap = new FormatConvertedBitmap(cFrame, PixelFormats.Default, null, 0.) //new FormatConvertedBitmap(cFrame, PixelFormats.Gray16, null, 0.)
+            let convertedBitmap = new FormatConvertedBitmap(cFrame, PixelFormats.Bgr101010, null, 0.) //new FormatConvertedBitmap(cFrame, PixelFormats.Gray16, null, 0.)
+            let bytesPerPixel = convertedBitmap.Format.BitsPerPixel / 8
             let width  = convertedBitmap.PixelWidth
             let height = convertedBitmap.PixelHeight
             let stride = width * bytesPerPixel
@@ -57,7 +57,7 @@ module Image =
             convertedBitmap.CopyPixels(bytes, width * bytesPerPixel, 0)
             let pixelSize = bytesPerPixel
             Array2D.init width height (fun x y -> 
-                BitConverter.ToInt16 (bytes,stride * y + x * pixelSize) //ToInt16 default
+                BitConverter.ToInt32 (bytes,stride * y + x * pixelSize) //ToInt16 default
                 )
         )
         |> Seq.head
