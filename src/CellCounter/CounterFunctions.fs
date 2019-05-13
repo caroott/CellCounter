@@ -190,6 +190,24 @@ module Filter =
                     elif    x > rightX || x < leftX then 0.
                     else    value))
         selectPicture
+    
+    let rectangleSelectorDimensions (wvPicture: float[,]) (height: int) (width: int) =
+        let center = (Array2D.length2 wvPicture) / 2, (Array2D.length1 wvPicture) / 2
+        let upperY = snd center + height / 2
+        let lowerY = snd center - height / 2
+        let leftX  = fst center - width / 2
+        let rightX = fst center + width / 2
+        let jaggedPicture = wvPicture |> Array2D.toJaggedArray
+        let selectPicture =
+            jaggedPicture
+            |> Array.mapi 
+                (fun y -> Array.mapi (fun x value->
+                    if      y > upperY || y < lowerY then nan
+                    elif    x > rightX || x < leftX then nan
+                    else    value))
+            |> Array.map (Array.filter (fun x -> not (isNan x)))
+            |> Array.filter (fun x -> not (Array.isEmpty x))
+        JaggedArray.toArray2D selectPicture
 
     let threshold (transf: float[][]) (percentileValue: float) (maximaPositive: bool) =
 
