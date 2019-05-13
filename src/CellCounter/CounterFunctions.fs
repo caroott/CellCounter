@@ -191,7 +191,7 @@ module Filter =
                     else    value))
         selectPicture
     
-    let rectangleSelectorDimensions (wvPicture: float[,]) (height: int) (width: int) =
+    let rectangleSelectorDimensions (wvPicture: int[,]) (height: int) (width: int) =
         let center = (Array2D.length2 wvPicture) / 2, (Array2D.length1 wvPicture) / 2
         let upperY = snd center + height / 2
         let lowerY = snd center - height / 2
@@ -199,13 +199,11 @@ module Filter =
         let rightX = fst center + width / 2
         let jaggedPicture = wvPicture |> Array2D.toJaggedArray
         let selectPicture =
-            jaggedPicture
-            |> Array.mapi 
-                (fun y -> Array.mapi (fun x value->
-                    if      y > upperY || y < lowerY then nan
-                    elif    x > rightX || x < leftX then nan
-                    else    value))
-            |> Array.map (Array.filter (fun x -> not (isNan x)))
+            Array.mapi 
+                (fun y array -> Array.foldi (fun x acc value->
+                    if      y > upperY || y < lowerY then acc
+                    elif    x > rightX || x < leftX then acc
+                    else    Array.append acc [|value|]) [||] array) jaggedPicture
             |> Array.filter (fun x -> not (Array.isEmpty x))
         JaggedArray.toArray2D selectPicture
 
