@@ -147,59 +147,71 @@ module Maxima =
     
             let surroundingList = createSurroundingPixelLists b c numberofsurpix
 
-            let rec isSortedAsc (list: float list) = 
+            let rec isSortedAsc (list: float list) =
                 match list with
                     | [] -> true
                     | [x] -> true
-                    | x::((y::_)as t) -> if x > y then false else isSortedAsc(t) 
-            let boolList = surroundingList |> List.map  (fun x -> isSortedAsc x)
+                    | x::((y::_)as t) -> if x > y then false else isSortedAsc(t)
+            let boolList = surroundingList |> List.map (fun x -> isSortedAsc x)
             (boolList |> List.contains false) = false
 
         //calculates checkListsForContinuousDecline for every pixel
-        for i=numberofsurpix to (Array2D.length1 cWTPercArray)-(numberofsurpix+1) do 
-            for j=numberofsurpix to (Array2D.length2 cWTPercArray)-(numberofsurpix+1) do 
-                if cWTPercArray.[i,j] >= 10. then                              
-                    if checkListsForContinuousDecline i j numberofsurpix = true     
-                        then arrayOfMaxima.[i,j] <- cWTPercArray.[i,j]              
-                    else arrayOfMaxima.[i,j] <- 0.                                  
-                else arrayOfMaxima.[i,j] <- 0.                                   
+        for i=numberofsurpix to (Array2D.length1 cWTPercArray)-(numberofsurpix+1) do
+            for j=numberofsurpix to (Array2D.length2 cWTPercArray)-(numberofsurpix+1) do
+                if cWTPercArray.[i,j] >= 10. then
+                    if checkListsForContinuousDecline i j numberofsurpix = true
+                        then arrayOfMaxima.[i,j] <- cWTPercArray.[i,j]
+                    else arrayOfMaxima.[i,j] <- 0.
+                else arrayOfMaxima.[i,j] <- 0.
         allmaximaArray arrayOfMaxima
 
 module Filter =
 
-    let circleSelector (wvPicture: float[,]) (pointAXY: float * float) (pointBXY: float * float) =
+    ///This function takes a float 2DArray, a float tuple and a float tuple. It returns a jagged array.
+    ///image is the image which should be set to zero around a selected circle , pointAXY and pointBXY
+    ///are two opposing points on the desired circle as float tuples with the X value first and the Y value second.
+
+    let circleSelector (image: float[,]) (pointAXY: float * float) (pointBXY: float * float) =
         let centerXY        = ((fst pointAXY + fst pointBXY)/2.,(snd pointAXY + snd pointBXY)/2.)
         let radius          = (sqrt((fst pointAXY - fst pointBXY)**2. + (snd pointAXY - snd pointBXY)**2.))/2.
-        let jaggedPicture   = wvPicture |> Array2D.toJaggedArray
-        let cutPicture =    jaggedPicture
-                            |> Array.mapi (fun y -> Array.mapi (fun x value->
-                                let distanceCenter = sqrt ((float x - fst centerXY)**2. + (float y - snd centerXY)**2.)
-                                if distanceCenter > radius then 0.
-                                else value))
+        let jaggedPicture   = image |> Array2D.toJaggedArray
+        let cutPicture      = jaggedPicture
+                              |> Array.mapi (fun y -> Array.mapi (fun x value->
+                                 let distanceCenter = sqrt ((float x - fst centerXY)**2. + (float y - snd centerXY)**2.)
+                                 if distanceCenter > radius then 0.
+                                 else value))
         cutPicture
 
-    let rectangleSelector (wvPicture: float[,]) (upperLeftXY: int * int) (lowerRightXY: int * int) =
+    ///This function takes a float 2DArray, an int tuple and an int tuple. It returns a jagged array.
+    ///image is the image which should be set to zero around a selected rectangle , lowerLeftXY and lowerRightXY 
+    ///are the upper left and lower right points of the rectangle as int tuples with the X value first and the Y value second.
+
+    let rectangleSelector (image: float[,]) (upperLeftXY: int * int) (lowerRightXY: int * int) =
         let upperY = snd upperLeftXY
         let lowerY = snd lowerRightXY
         let leftX  = fst upperLeftXY
         let rightX = fst lowerRightXY
-        let jaggedPicture = wvPicture |> Array2D.toJaggedArray
+        let jaggedPicture = image |> Array2D.toJaggedArray
         let selectPicture =
             jaggedPicture
-            |> Array.mapi 
+            |> Array.mapi
                 (fun y -> Array.mapi (fun x value->
                     if      y > upperY || y < lowerY then 0.
                     elif    x > rightX || x < leftX then 0.
                     else    value))
         selectPicture
-    
-    let rectangleSelectorDimensions (wvPicture: int[,]) (height: int) (width: int) =
-        let center = (Array2D.length2 wvPicture) / 2, (Array2D.length1 wvPicture) / 2
+ 
+    ///This function takes an int 2DArray, an int and an int. It returns an int 2DArray.
+    ///image is the image which should be cut into the desired dimensions, height and width are the dimensions of the new 2DArray (picture).
+    ///The center of the picture stays the same.
+
+    let rectangleSelectorCenter (image: int[,]) (height: int) (width: int) =
+        let center = (Array2D.length2 image) / 2, (Array2D.length1 image) / 2
         let upperY = snd center + height / 2
         let lowerY = snd center - height / 2
         let leftX  = fst center - width / 2
         let rightX = fst center + width / 2
-        let jaggedPicture = wvPicture |> Array2D.toJaggedArray
+        let jaggedPicture = image |> Array2D.toJaggedArray
         let selectPicture =
             Array.mapi 
                 (fun y array -> Array.foldi (fun x acc value->
@@ -209,19 +221,30 @@ module Filter =
             |> Array.filter (fun x -> not (Array.isEmpty x))
         JaggedArray.toArray2D selectPicture
 
-    let thresholdPercentile (transf: float[][]) (percentileValue: float) (maximaPositive: bool) =
+    ///This function takes a float 2DArray, a float and a boolean. It returns a jagged array.
+    ///image is the image which should be thresholded, percentile is the percentage of values which should be thresholded
+    ///and the boolean indicates whether the maxima are positive (true) or negative (false).
+
+    let thresholdPercentile (image: float[,]) (percentileValue: float) (maximaPositive: bool) =
+
+        let jaggedImage     = image |> Array2D.toJaggedArray
 
         if maximaPositive then 
-            let percentile = transf |> Array.concat |> Array.sort
+            let percentile  = jaggedImage |> Array.concat |> Array.sort
             let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
-            transf
+            jaggedImage
             |> JaggedArray.map (fun x -> if x < cutOffValue then 0. else x)
         else
-            let percentile = transf |> Array.concat |> Array.sortDescending
+            let percentile  = jaggedImage |> Array.concat |> Array.sortDescending
             let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
-            transf
+            jaggedImage
             |> JaggedArray.map (fun x -> if x > cutOffValue then 0. else -x)
-    
+
+
+    ///This function takes a float 2DArray, a float and a boolean. It returns a jagged array.
+    ///image is the image which should be thresholded, multiplier can be used to increase the cut-off value
+    ///and the boolean indicates whether the maxima are positive (true) or negative (false)
+
     let thresholdMaxima (image: float[,]) multiplier (maximaPositive: bool) =
 
         let jaggedImage         = image |> Array2D.toJaggedArray
