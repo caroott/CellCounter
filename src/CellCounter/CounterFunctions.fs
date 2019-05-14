@@ -51,7 +51,7 @@ module Image =
                     BitmapCacheOption.None);   
         Seq.init (tiffDecoder.Frames.Count) (fun frameIndex ->
             let cFrame = tiffDecoder.Frames.[frameIndex]
-            let convertedBitmap = new FormatConvertedBitmap(cFrame, PixelFormats.Bgr101010, null, 0.) //new FormatConvertedBitmap(cFrame, PixelFormats.Gray16, null, 0.)
+            let convertedBitmap = new FormatConvertedBitmap(cFrame, PixelFormats.Bgr101010, null, 0.)
             let bytesPerPixel = convertedBitmap.Format.BitsPerPixel / 8
             let width  = convertedBitmap.PixelWidth
             let height = convertedBitmap.PixelHeight
@@ -59,8 +59,8 @@ module Image =
             let bytes : byte[] = Array.zeroCreate (width * height * bytesPerPixel)
             convertedBitmap.CopyPixels(bytes, width * bytesPerPixel, 0)
             let pixelSize = bytesPerPixel
-            Array2D.init width height (fun x y -> 
-                BitConverter.ToInt32 (bytes,stride * y + x * pixelSize) //ToInt16 default
+            Array2D.init width height (fun x y ->
+                BitConverter.ToInt32 (bytes,stride * y + x * pixelSize)
                 )
         )
         |> Seq.head
@@ -86,20 +86,24 @@ module Image =
 
 module Maxima =
 
-    let inline C3DWT (marr: MarrWavelet.MarrWavelet) (frame:'a[,]) =
+    ///This function takes a MarrWavelet and a 2DArray. It returns a float 2DArray.
+    ///marr is a MarrWavelet, which can be created by the marrWaveletCreator. image is the image which should be transformed with the marr wavelet.
+    ///The output is the transformed image.
+
+    let inline C3DWT (marr: MarrWavelet.MarrWavelet) (image:'a[,]) =
         //the length of both sides from the picture
-        let resolutionPixelfst = (Array2D.length1 frame) - (40 * 2)
-        let resolutionPixelsnd = (Array2D.length2 frame) - (40 * 2)
+        let resolutionPixelfst = (Array2D.length1 image) - (40 * 2)
+        let resolutionPixelsnd = (Array2D.length2 image) - (40 * 2)
         let offset = marr.PadAreaRadius
         let paddingoffset = 40
-        let (CWTArray2D0: float[,]) = Array2D.zeroCreate (Array2D.length2 frame) (Array2D.length1 frame)
+        let (CWTArray2D0: float[,]) = Array2D.zeroCreate (Array2D.length2 image) (Array2D.length1 image)
         for x = paddingoffset to (paddingoffset + (resolutionPixelsnd-1)) do
             for y = paddingoffset to (paddingoffset + (resolutionPixelfst-1)) do
                 CWTArray2D0.[x,y] <-
                     let rec loop acc' a b =
                         if a <= 2 * offset then
                             if b <= 2 * offset then
-                                let acc = acc' + ((marr.Values).[a,b] * (frame.[(y+(a-offset)),(x+(b-offset))] |> float))
+                                let acc = acc' + ((marr.Values).[a,b] * (image.[(y+(a-offset)),(x+(b-offset))] |> float))
                                 loop acc a (b + 1)
                             else
                                 loop acc' (a + 1) 0
@@ -114,26 +118,28 @@ module Maxima =
         deletePaddingArea
 
 
-    ///gets Marr, a framenumber, an offset and the number of pixels to look at in the surrounding, and gives [,] of localMaxima
-    let inline findLocalMaxima dist frame =   
+    ///This function takes an int and a float 2DArray. It returns a float tuple list.
+    ///image is the image in which the local maxima should be found. dist is the radius for points around the checked point which should also belong to the
+    ///local maximum. The returned tuple list contains the coordinates of the found maxima.
+
+    let inline findLocalMaxima dist image =
         ///gets single 2D Array with only Maxima in it and gives coordinates of local maxima
         let allmaximaArray (arr:float[,]) =
             let rec loop acc i j =
                 if i < (Array2D.length1 arr)-1 then
-                    if j < (Array2D.length2 arr)-1  then 
-                        if (arr.[i,j]) > 0. then loop ((float i, float j)::acc) i (j+1) 
-                        else loop acc i (j+1)    
+                    if j < (Array2D.length2 arr)-1  then
+                        if (arr.[i,j]) > 0. then loop ((float i, float j)::acc) i (j+1)
+                        else loop acc i (j+1)
                     else loop acc (i+1) 0
                 else acc
             loop [] 0 0 
-        let numberofsurpix = dist
-        let (cWTPercArray: float [,]) = frame  
+        let (cWTPercArray: float [,]) = image  
         let arrayOfMaxima = Array2D.zeroCreate ((Array2D.length1 cWTPercArray)) ((Array2D.length2 cWTPercArray))
-        let checkListsForContinuousDecline b c numberofsurpix =      
+        let checkListsForContinuousDecline b c numberofsurpix =
             let createSurroundingPixelLists b c numberofsurpix =
                 let rec loop i accN accS accW accE accNW accSW accNE accSE =
                     let imod = (i |> float) * 0.7071 |> floor |> int
-                    if i <= numberofsurpix then 
+                    if i <= numberofsurpix then
                         loop (i+1)  (cWTPercArray.[b+i   ,c     ]::accN )
                                     (cWTPercArray.[b-i   ,c     ]::accS )
                                     (cWTPercArray.[b     ,c-i   ]::accW )
@@ -143,7 +149,7 @@ module Maxima =
                                     (cWTPercArray.[b+imod,c+imod]::accNE)
                                     (cWTPercArray.[b-imod,c+imod]::accSE)
                     else [accN;accS;accW;accE;accNW;accSW;accNE;accSE]
-                loop 0 [] [] [] [] [] [] [] [] 
+                loop 0 [] [] [] [] [] [] [] []
     
             let surroundingList = createSurroundingPixelLists b c numberofsurpix
 
@@ -156,10 +162,10 @@ module Maxima =
             (boolList |> List.contains false) = false
 
         //calculates checkListsForContinuousDecline for every pixel
-        for i=numberofsurpix to (Array2D.length1 cWTPercArray)-(numberofsurpix+1) do
-            for j=numberofsurpix to (Array2D.length2 cWTPercArray)-(numberofsurpix+1) do
+        for i=dist to (Array2D.length1 cWTPercArray)-(dist+1) do
+            for j=dist to (Array2D.length2 cWTPercArray)-(dist+1) do
                 if cWTPercArray.[i,j] >= 10. then
-                    if checkListsForContinuousDecline i j numberofsurpix = true
+                    if checkListsForContinuousDecline i j dist = true
                         then arrayOfMaxima.[i,j] <- cWTPercArray.[i,j]
                     else arrayOfMaxima.[i,j] <- 0.
                 else arrayOfMaxima.[i,j] <- 0.
