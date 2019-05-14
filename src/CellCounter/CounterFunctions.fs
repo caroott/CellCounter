@@ -81,7 +81,7 @@ module Image =
         let paddedRawData =
             let rnd = System.Random()
             data
-            |> padArray2DWithRandom rnd 40
+            |> padArray2DWithRandom rnd 100
         paddedRawData
 
 module Maxima =
@@ -92,10 +92,10 @@ module Maxima =
 
     let inline C3DWT (marr: MarrWavelet.MarrWavelet) (image:'a[,]) =
         //the length of both sides from the picture substracting the padding area
-        let resolutionPixelfst = (Array2D.length1 image) - (40 * 2)
-        let resolutionPixelsnd = (Array2D.length2 image) - (40 * 2)
+        let resolutionPixelfst = (Array2D.length1 image) - (100 * 2)
+        let resolutionPixelsnd = (Array2D.length2 image) - (100 * 2)
         let offset = marr.PadAreaRadius
-        let paddingoffset = 40
+        let paddingoffset = 100
         let (CWTArray2D0: float[,]) = Array2D.zeroCreate (Array2D.length2 image) (Array2D.length1 image)
         for x = paddingoffset to (paddingoffset + (resolutionPixelsnd-1)) do
             for y = paddingoffset to (paddingoffset + (resolutionPixelfst-1)) do
@@ -181,11 +181,15 @@ module Filter =
 
         let jaggedPicture   = image |> Array2D.toJaggedArray
 
+        //calculates the center point between the two given points
         let centerXY        = ((fst pointAXY + fst pointBXY)/2.,(snd pointAXY + snd pointBXY)/2.)
+        //calculates the radius of the circle
         let radius          = (sqrt((fst pointAXY - fst pointBXY)**2. + (snd pointAXY - snd pointBXY)**2.))/2.
+        //sets the value of every point outside of the defined circle to 0.
         let cutPicture      = jaggedPicture
                               |> Array.mapi 
                                   (fun y -> Array.mapi (fun x value->
+                                   //calculates the distance of every point to the center of the cirlce. If it is larger than the radius, the value is set to 0.
                                    let distanceCenter = sqrt ((float x - fst centerXY)**2. + (float y - snd centerXY)**2.)
                                    if distanceCenter > radius then 0.
                                    else value))
@@ -199,10 +203,12 @@ module Filter =
 
         let jaggedPicture = image |> Array2D.toJaggedArray
 
+        //the four boundaries of the rectangle
         let upperY        = snd upperLeftXY
         let lowerY        = snd lowerRightXY
         let leftX         = fst upperLeftXY
         let rightX        = fst lowerRightXY
+        //checks if the point is inside the boundaries, if it is not, the value is set to 0.
         let selectPicture = jaggedPicture
                             |> Array.mapi
                                 (fun y -> Array.mapi (fun x value->
@@ -219,12 +225,15 @@ module Filter =
 
         let jaggedPicture = image |> Array2D.toJaggedArray
 
+        //calculates the center of the image
         let center        = (Array2D.length2 image) / 2, (Array2D.length1 image) / 2
+        //the four boundaries of the rectangle
         let upperY        = snd center + height / 2
         let lowerY        = snd center - height / 2
         let leftX         = fst center - width / 2
         let rightX        = fst center + width / 2
-        let selectPicture = Array.mapi 
+        //every point outside of the boundaries is removed, resulting in a smaller picture
+        let selectPicture = Array.mapi
                              (fun y array -> Array.foldi (fun x acc value->
                                  if      y > upperY || y < lowerY then acc
                                  elif    x > rightX || x < leftX then acc
