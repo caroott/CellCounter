@@ -91,7 +91,7 @@ module Maxima =
     ///The output is the transformed image.
 
     let inline C3DWT (marr: MarrWavelet.MarrWavelet) (image:'a[,]) =
-        //the length of both sides from the picture
+        //the length of both sides from the picture substracting the padding area
         let resolutionPixelfst = (Array2D.length1 image) - (40 * 2)
         let resolutionPixelsnd = (Array2D.length2 image) - (40 * 2)
         let offset = marr.PadAreaRadius
@@ -178,14 +178,17 @@ module Filter =
     ///are two opposing points on the desired circle as float tuples with the X value first and the Y value second.
 
     let circleSelector (image: float[,]) (pointAXY: float * float) (pointBXY: float * float) =
+
+        let jaggedPicture   = image |> Array2D.toJaggedArray
+
         let centerXY        = ((fst pointAXY + fst pointBXY)/2.,(snd pointAXY + snd pointBXY)/2.)
         let radius          = (sqrt((fst pointAXY - fst pointBXY)**2. + (snd pointAXY - snd pointBXY)**2.))/2.
-        let jaggedPicture   = image |> Array2D.toJaggedArray
         let cutPicture      = jaggedPicture
-                              |> Array.mapi (fun y -> Array.mapi (fun x value->
-                                 let distanceCenter = sqrt ((float x - fst centerXY)**2. + (float y - snd centerXY)**2.)
-                                 if distanceCenter > radius then 0.
-                                 else value))
+                              |> Array.mapi 
+                                  (fun y -> Array.mapi (fun x value->
+                                   let distanceCenter = sqrt ((float x - fst centerXY)**2. + (float y - snd centerXY)**2.)
+                                   if distanceCenter > radius then 0.
+                                   else value))
         cutPicture
 
     ///This function takes a float 2DArray, an int tuple and an int tuple. It returns a jagged array.
@@ -193,18 +196,19 @@ module Filter =
     ///are the upper left and lower right points of the rectangle as int tuples with the X value first and the Y value second.
 
     let rectangleSelector (image: float[,]) (upperLeftXY: int * int) (lowerRightXY: int * int) =
-        let upperY = snd upperLeftXY
-        let lowerY = snd lowerRightXY
-        let leftX  = fst upperLeftXY
-        let rightX = fst lowerRightXY
+
         let jaggedPicture = image |> Array2D.toJaggedArray
-        let selectPicture =
-            jaggedPicture
-            |> Array.mapi
-                (fun y -> Array.mapi (fun x value->
-                    if      y > upperY || y < lowerY then 0.
-                    elif    x > rightX || x < leftX then 0.
-                    else    value))
+
+        let upperY        = snd upperLeftXY
+        let lowerY        = snd lowerRightXY
+        let leftX         = fst upperLeftXY
+        let rightX        = fst lowerRightXY
+        let selectPicture = jaggedPicture
+                            |> Array.mapi
+                                (fun y -> Array.mapi (fun x value->
+                                    if      y > upperY || y < lowerY then 0.
+                                    elif    x > rightX || x < leftX then 0.
+                                    else    value))
         selectPicture
  
     ///This function takes an int 2DArray, an int and an int. It returns an int 2DArray.
@@ -212,19 +216,20 @@ module Filter =
     ///The center of the picture stays the same.
 
     let rectangleSelectorCenter (image: int[,]) (height: int) (width: int) =
-        let center = (Array2D.length2 image) / 2, (Array2D.length1 image) / 2
-        let upperY = snd center + height / 2
-        let lowerY = snd center - height / 2
-        let leftX  = fst center - width / 2
-        let rightX = fst center + width / 2
+
         let jaggedPicture = image |> Array2D.toJaggedArray
-        let selectPicture =
-            Array.mapi 
-                (fun y array -> Array.foldi (fun x acc value->
-                    if      y > upperY || y < lowerY then acc
-                    elif    x > rightX || x < leftX then acc
-                    else    Array.append acc [|value|]) [||] array) jaggedPicture
-            |> Array.filter (fun x -> not (Array.isEmpty x))
+
+        let center        = (Array2D.length2 image) / 2, (Array2D.length1 image) / 2
+        let upperY        = snd center + height / 2
+        let lowerY        = snd center - height / 2
+        let leftX         = fst center - width / 2
+        let rightX        = fst center + width / 2
+        let selectPicture = Array.mapi 
+                             (fun y array -> Array.foldi (fun x acc value->
+                                 if      y > upperY || y < lowerY then acc
+                                 elif    x > rightX || x < leftX then acc
+                                 else    Array.append acc [|value|]) [||] array) jaggedPicture
+                              |> Array.filter (fun x -> not (Array.isEmpty x))
         JaggedArray.toArray2D selectPicture
 
     ///This function takes a float 2DArray, a float and a boolean. It returns a jagged array.
