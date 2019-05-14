@@ -12,6 +12,8 @@ open System.Threading
 open System.Collections.Generic
 
 module MarrWavelet =
+    
+    
     type MarrWavelet =  {
         Scale           : float    
         Zero            : float    
@@ -22,7 +24,7 @@ module MarrWavelet =
         LMdistance      : int      
         zFilterdist     : float    
                         }
-    
+
     let marrWaveletCreator (radius : float) = 
         let functionMarr x (y:float) s = (1./(Math.PI*s**2.))*(1.-(x**2.+y**2.)/(2.*s**2.))*(Math.E**(-((x**2.+y**2.)/(2.*s**2.))))
         let functionValuesMarr scale list= Array.map (fun y -> (Array.map (fun x -> functionMarr x y scale) list)) list
@@ -207,7 +209,7 @@ module Filter =
             |> Array.filter (fun x -> not (Array.isEmpty x))
         JaggedArray.toArray2D selectPicture
 
-    let threshold (transf: float[][]) (percentileValue: float) (maximaPositive: bool) =
+    let thresholdPercentile (transf: float[][]) (percentileValue: float) (maximaPositive: bool) =
 
         if maximaPositive then 
             let percentile = transf |> Array.concat |> Array.sort
@@ -219,3 +221,24 @@ module Filter =
             let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
             transf
             |> JaggedArray.map (fun x -> if x > cutOffValue then 0. else -x)
+    
+    let thresholdMaxima (image: float[,]) multiplier (maximaPositive: bool) =
+
+        let jaggedImage         = image |> Array2D.toJaggedArray
+
+        if maximaPositive then
+            let maxima          = jaggedImage
+                                  |> Array.map Array.max
+                                  |> Array.sort
+            let topTenAverage   = Array.take (maxima.Length / 10) maxima
+                                  |> Array.average
+            jaggedImage
+            |> JaggedArray.map (fun x -> if x < topTenAverage * multiplier then 0. else x)
+        else 
+            let minima          = jaggedImage
+                                  |> Array.map Array.min
+                                  |> Array.sortDescending
+            let topTenAverage   = Array.take (minima.Length / 10) minima
+                                  |> Array.average
+            jaggedImage
+            |> JaggedArray.map (fun x -> if x > topTenAverage * multiplier then 0. else -x)
