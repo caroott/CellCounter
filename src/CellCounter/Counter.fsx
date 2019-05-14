@@ -20,144 +20,81 @@ open System
 open BioFSharp.ImgP
 open BioFSharp.ImgP
 
+let thresholdFilter (image: float[,]) (maximaPositive: bool) =
+    let jaggedImage         = image |> Array2D.toJaggedArray
 
-let wvArray = [|1.339646565; 2.132102385; 2.924558206; 3.717014026; 4.509469847; 5.301925668; 6.094381488; 6.886837309; 7.679293129; 8.471748950; 9.264204771|]
-let wvArray2 = [|10.|]
+    if maximaPositive then
+        let maxima          = jaggedImage
+                              |> Array.map Array.max
+                              |> Array.sort
+        let topTenAverage   = Array.take (maxima.Length / 10) maxima
+                              |> Array.average
+        jaggedImage
+        |> JaggedArray.map (fun x -> if x < topTenAverage*2. then 0. else x)
+    else 
+        let minima          = jaggedImage
+                              |> Array.map Array.min
+                              |> Array.sortDescending
+        let topTenAverage   = Array.take (minima.Length / 10) minima
+                              |> Array.average
+        jaggedImage
+        |> JaggedArray.map (fun x -> if x > topTenAverage*2. then 0. else -x)
 
-type LocalMaxima =  
-        {
-        FrameNumber : int 
-        X           : float
-        Y           : float
-        Intensity   : float
-        } 
+let readAllImages folderPath height width radius =
+    let imagePaths        = Directory.GetFiles folderPath
+    let images            = imagePaths
+                            |> Array.map Image.loadTiff
+    let selectedImages    = images
+                            |> Array.map (fun x -> Filter.rectangleSelectorDimensions x height width)
+    let paddedImages      = Centroid.paddTiff selectedImages
+                            |> Array.map (Array2D.map float)
+    let transformedImages = paddedImages 
+                            |> Array.map (fun x -> Maxima.C3DWT (MarrWavelet.marrWaveletCreator radius) x)
 
-let createLocalMaxima framenumber x y intensity = 
-        {
-        FrameNumber = framenumber 
-        X           = x
-        Y           = y
-        Intensity   = intensity
-        }
+    let thresholdedImages = transformedImages
+                            |> Array.map (fun x -> thresholdFilter x  false)
+    //let thresholdedImages = transformedImages
+    //                        |> Array.map (fun x -> Filter.threshold (x |> Array2D.toJaggedArray) 0.995 false)
+    thresholdedImages
 
-let wavelet   = wvArray |> Array.map MarrWavelet.marrWaveletCreator
+let all = readAllImages @"C:\Users\Student\OneDrive\MP_Biotech\VP_Timo\CellCounterPictures" 590 590 8.
 
-let image = Image.loadTiff @"C:\Users\Student\OneDrive\MP_Biotech\VP_Timo\CellCounterPictures\1_1_b.tif"
-let paddedImage = Image.paddTiff image |> Array2D.map float
-//let res = Maxima.C3DWT wavelet.[0] paddedImage
 
-let maxima = 
-    let length = wavelet.Length
-    wavelet |> Array.mapi (fun i x -> 
-    printfn "progress %i of %i" (i+1) length
-    Maxima.C3DWT x paddedImage)
+all
+//|> Array.map Array2D.toJaggedArray
+|>Array.map Chart.Heatmap
+//|>Array.map (Chart.withSize (1200., 900.))
+//|> Array.head |> fun x -> x |> Chart.Show
+|>Array.map Chart.Show
 
-let threshold (transf: float[][]) (percentileValue: float) (maximaPositive: bool) =
 
-    if maximaPositive then 
-        let percentile = transf |> Array.concat |> Array.sort
-        let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
-        transf
-        |> JaggedArray.map (fun x -> if x < cutOffValue then 0. else x)
-    else
-        let percentile = transf |> Array.concat |> Array.sortDescending
-        let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
-        transf
-        |> JaggedArray.map (fun x -> if x > cutOffValue then 0. else -x)
 
-let filteredPic =
-    let selectedRectangle = Filter.rectangleSelector maxima.[9] (460, 860) (1020, 300)
-    let thresholdedPic = Filter.threshold selectedRectangle 0.995 false
-    thresholdedPic
 
-//let circleCutterAdaptive (wvPicture: float[,]) (horizontalLeft: float * float) (horizontalRight: float * float) (verticalTop: float * float) (verticalBottom: float * float)=
-//    let centerXY         = (fst horizontalLeft + ((fst horizontalRight - fst horizontalLeft)/2.)),(snd verticalBottom + ((snd verticalTop - snd verticalBottom)/2.))
-//    let radiusHorizontal = (fst horizontalRight - fst horizontalLeft)/2.
-//    let radiusVertical   = (snd verticalTop - snd verticalBottom)/2.
-//    let jaggedPicture    = wvPicture |> Array2D.toJaggedArray
-//    let cutPicture =    jaggedPicture
-//                        |> Array.mapi (fun y -> Array.mapi (fun x value->
-//                            let distanceHorizontal = abs (float x - fst centerXY)
-//                            let distanceVertical = abs (float y - snd centerXY)
-//                            let distanceCenter = sqrt ((float x - fst centerXY)**2. + (float y - snd centerXY)**2.)
-//                            let adaptedRadius = (distanceHorizontal * radiusHorizontal + distanceVertical * radiusVertical) / (distanceHorizontal + distanceVertical)
-//                                //if distanceHorizontal > distanceVertical then
-//                                //    let multiplier = distanceVertical / distanceHorizontal
-//                                //    let radius     = multiplier * radiusHorizontal + (1. - multiplier) * radiusVertical
-//                                //    radius
-//                                //else
-//                                //    let multiplier = distanceHorizontal / distanceVertical
-//                                //    let radius     = multiplier * radiusVertical + (1. - multiplier) * radiusHorizontal
-//                                //    radius
-//                            if distanceCenter > adaptedRadius then 
-//                                100000000.
-//                            else 
-//                                value))
-//    cutPicture
-
-//let putCoordinates (array: float[][]) =
-//    let mutable coordArray: float[][] = [||]
-//    let result =
-//        array
-//        |> Array.mapi (fun y ->
-//            Array.mapi (fun x value->
-//                if value <> 0. then
-//                    coordArray <- Array.append [|[|float x; float y|]|] coordArray
-//                    coordArray
-//                else 
-//                    coordArray
-//                    ))
-//    coordArray       
-            
-//let coords: float[][] = putCoordinates filteredPic
+//Maxima.findLocalMaxima 4 (filteredPic |> JaggedArray.toArray2D)
+//|> Chart.Point
+//|> fun x -> Chart.Combine [x |> Chart.withMarkerStyle (5, "black") ;maxima.[9] |> Array2D.toJaggedArray |>JaggedArray.transpose|> Chart.Heatmap]
+//|> Chart.Show
 
 
 //filteredPic
-//|> Array.concat
-//|> Chart.Histogram
-//|> Chart.Show
-//let dbScan = 
-//    coords
-//    |> FSharp.Stats.ML.Unsupervised.DbScan.compute (FSharp.Stats.ML.DistanceMetrics.euclideanNaNSquared) 1 1.5
-
-//dbScan.Clusterlist
-//|> Seq.map (fun cluster ->
-//    cluster 
-//    |> Seq.map (fun point -> point.[0],point.[1]
-//        )
-//    |> Chart.Point
-//    )
-//|> fun x -> Chart.Combine(Seq.append x (seq [(filteredPic |> Chart.Heatmap)]))
+//|> Chart.Heatmap
+//|> Chart.withSize (1200., 900.)
 //|> Chart.Show
 
 
+//let chart = 
+//    maxima.[9]
+//    |>Array2D.toJaggedArray
+//    |>Chart.Heatmap
+//    |>(Chart.withSize (1200., 900.))
+//    //|> Array.head |> fun x -> x |> Chart.Show
+//    |>Chart.Show
 
-
-Maxima.findLocalMaxima 4 (filteredPic |> JaggedArray.toArray2D)
-|> Chart.Point
-|> fun x -> Chart.Combine [x |> Chart.withMarkerStyle (5, "black") ;maxima.[9] |> Array2D.toJaggedArray |>JaggedArray.transpose|> Chart.Heatmap]
-|> Chart.Show
-
-
-filteredPic
-|> Chart.Heatmap
-|> Chart.withSize (1200., 900.)
-|> Chart.Show
-
-
-let chart = 
-    maxima.[9]
-    |>Array2D.toJaggedArray
-    |>Chart.Heatmap
-    |>(Chart.withSize (1200., 900.))
-    //|> Array.head |> fun x -> x |> Chart.Show
-    |>Chart.Show
-
-let chartAll = 
-    maxima
-    |>Array.map Array2D.toJaggedArray
-    |>Array.map Chart.Heatmap
-    |>Array.map (Chart.withSize (1200., 900.))
-    //|> Array.head |> fun x -> x |> Chart.Show
-    |>Array.map Chart.Show
+//let chartAll = 
+//    maxima
+//    |>Array.map Array2D.toJaggedArray
+//    |>Array.map Chart.Heatmap
+//    |>Array.map (Chart.withSize (1200., 900.))
+//    //|> Array.head |> fun x -> x |> Chart.Show
+//    |>Array.map Chart.Show
     
