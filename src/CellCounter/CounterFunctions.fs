@@ -4,12 +4,12 @@ namespace CounterFunctions
 open FSharpAux
 open FSharp.Stats
 open FSharp.Collections
+open FSharp.Plotly
 open System
 open System.IO
 open System.Windows.Media
 open System.Windows.Media.Imaging
-open System.Threading
-open System.Collections.Generic
+
 
 module MarrWavelet =
     
@@ -285,3 +285,47 @@ module Filter =
                                   |> Array.average
             jaggedImage
             |> JaggedArray.map (fun x -> if x > topTenAverage * multiplier then 0. else -x)
+
+module Pipeline =
+
+    let processAllImages folderPath height width radius multiplier=
+        let imagePaths        = Directory.GetFiles folderPath
+        let images            = imagePaths
+                                |> Array.map Image.loadTiff
+        let selectedImages    = images
+                                |> Array.map (fun x -> Filter.rectangleSelectorCenter x height width)
+        let paddedImages      = selectedImages
+                                |> Array.map (fun x -> Image.paddTiff (Array2D.map float x))
+        let transformedImages = paddedImages 
+                                |> Array.mapi (fun i x -> printfn "Apply wavelet to image %i of %i" (i + 1) paddedImages.Length
+                                                          Maxima.C3DWT (MarrWavelet.marrWaveletCreator radius) x
+                                              )
+        let thresholdedImages = transformedImages
+                                |> Array.map (fun x -> Filter.thresholdMaxima x multiplier false)
+        let localMaxima       = thresholdedImages
+                                |> Array.map (fun x -> Maxima.findLocalMaxima 4 (x 
+                                                                                 |> JaggedArray.transpose
+                                                                                 |> JaggedArray.toArray2D
+                                                                                )
+                                             )
+        let charts            =
+            let jaggedTransfImg   = transformedImages
+                                    |> Array.map Array2D.toJaggedArray
+            let jaggedSelectedImg = selectedImages
+                                    |> Array.map Array2D.toJaggedArray
+                                    |> Array.map Array.transpose
+            Array.mapi (fun i x -> 
+                            [Chart.Combine [Chart.Point localMaxima.[i]
+                                            |> Chart.withMarkerStyle (5, "black");
+                                            Chart.Heatmap x
+                                           ]; 
+                             Chart.Heatmap jaggedTransfImg.[i];
+                             Chart.Heatmap jaggedSelectedImg.[i]
+                            ] 
+                            |> Chart.Stack 3
+                            |> Chart.withSize (1800., 600.)
+                            |> Chart.Show
+                ) thresholdedImages
+        let cellCount = localMaxima
+                        |> Array.map (fun x -> List.length x)
+        cellCount
