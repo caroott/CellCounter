@@ -12,6 +12,7 @@ open System
 
 module MarrWavelet =
     
+    //The functions in this module are taken from BioFSharp.ImgP
     
     type MarrWavelet =  {
         Scale           : float    
@@ -37,9 +38,14 @@ module MarrWavelet =
         PadAreaRadius   = ceil (3. * radius + 2.) |> int 
         LMdistance      = (1.2619 * (radius) + 1.3095) |> round 0 |> int 
         zFilterdist     = 3.
-}
+        }
 
 module Image =
+
+    //The functions in this module are taken from BioFSharp.ImgP and modified for use in this project
+
+    ///This function takes a string. It returns an int 2DArray.
+    ///The returned 2DArray is a representation of the pixels in the file given by the filepath.
 
     let loadTiff filePath=
         let stream = File.OpenRead(filePath)
@@ -64,6 +70,9 @@ module Image =
         )
         |> Seq.head
 
+    ///This function takes a 2DArray. It returns a 2DArray.
+    ///The returned 2DArray is padded in both dimensions with random values for the wavelet transformation.
+
     let paddTiff (data: 'a[,])=
         let padArray2DWithRandom (rnd:System.Random) (offset:int) (arr:'a[,]) =
             let rowCount = Array2D.length1 arr 
@@ -84,6 +93,8 @@ module Image =
         paddedRawData
 
 module Maxima =
+    
+    //The functions in this module are taken from BioFSharp.ImgP and modified for use in this project
 
     ///This function takes a MarrWavelet and a 2DArray. It returns a float 2DArray.
     ///marr is a MarrWavelet, which can be created by the marrWaveletCreator. image is the image which should be transformed with the marr wavelet.
