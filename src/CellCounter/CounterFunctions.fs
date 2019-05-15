@@ -104,12 +104,16 @@ module Maxima =
         //the length of both sides from the picture substracting the padding area
         let resolutionPixelfst = (Array2D.length1 image) - (100 * 2)
         let resolutionPixelsnd = (Array2D.length2 image) - (100 * 2)
+        //radius of the marr wavelet
         let offset = marr.PadAreaRadius
         let paddingoffset = 100
+        //creates an empty 2DArray which gets filled with the transformed values
         let (CWTArray2D0: float[,]) = Array2D.zeroCreate (Array2D.length2 image) (Array2D.length1 image)
+        //two for loops to apply the wavelet transformation to every point that wasn't added in the padding process
         for x = paddingoffset to (paddingoffset + (resolutionPixelsnd-1)) do
             for y = paddingoffset to (paddingoffset + (resolutionPixelfst-1)) do
                 CWTArray2D0.[x,y] <-
+                    //applies the wavelet to the point taking all surrounding points (limited by the offset) into account
                     let rec loop acc' a b =
                         if a <= 2 * offset then
                             if b <= 2 * offset then
@@ -119,8 +123,11 @@ module Maxima =
                                 loop acc' (a + 1) 0
                         else acc'
                     loop 0. 0 0
+        //removes the previously added padding area
         let deletePaddingArea =
+            //creates a 2DArray with the dimensions of the previous unpadded 2DArray
             let arrayWithoutPaddingoffset = Array2D.zeroCreate ((Array2D.length1 CWTArray2D0)-(2*paddingoffset)) ((Array2D.length2 CWTArray2D0)-(2*paddingoffset))
+            //copies all points that belonged to the unpadded 2DArray from the padded array to the newly created array
             for i=paddingoffset to (Array2D.length1 CWTArray2D0)-(paddingoffset+1) do
                 for j=paddingoffset to (Array2D.length2 CWTArray2D0)-(paddingoffset+1) do
                     arrayWithoutPaddingoffset.[(i-paddingoffset),(j-paddingoffset)] <- CWTArray2D0.[i,j]
