@@ -1,15 +1,14 @@
 
 namespace CounterFunctions
 
+open FSharp.Collections
 open FSharpAux
 open FSharp.Stats
-open FSharp.Collections
 open FSharp.Plotly
-open System
-open System.IO
 open System.Windows.Media
 open System.Windows.Media.Imaging
-
+open System.IO
+open System
 
 module MarrWavelet =
     
@@ -249,13 +248,17 @@ module Filter =
 
         let jaggedImage     = image |> Array2D.toJaggedArray
 
-        if maximaPositive then 
+        if maximaPositive then
+            //sorts the values in the array in an ascending order
             let percentile  = jaggedImage |> Array.concat |> Array.sort
+            //cutoffValue takes the value which is higher than x % of all values
             let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
             jaggedImage
             |> JaggedArray.map (fun x -> if x < cutOffValue then 0. else x)
         else
+            //sorts the values in the array in an descending order
             let percentile  = jaggedImage |> Array.concat |> Array.sortDescending
+            //cutoffValue takes the value which is lower than x % of all values
             let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
             jaggedImage
             |> JaggedArray.map (fun x -> if x > cutOffValue then 0. else -x)
@@ -270,50 +273,72 @@ module Filter =
         let jaggedImage         = image |> Array2D.toJaggedArray
 
         if maximaPositive then
+            //takes the maximum value of every pixel row (array) and sorts them descending
             let maxima          = jaggedImage
                                   |> Array.map Array.max
-                                  |> Array.sort
+                                  |> Array.sortDescending
+            //takes the highest 10% of the values and averages them
             let topTenAverage   = Array.take (maxima.Length / 10) maxima
                                   |> Array.average
+            //sets every value that is lower than the cut off * multiplier to 0.
             jaggedImage
             |> JaggedArray.map (fun x -> if x < topTenAverage * multiplier then 0. else x)
-        else 
+        else
+            //takes the minimum value of every pixel row (array) and sorts them ascending
             let minima          = jaggedImage
                                   |> Array.map Array.min
-                                  |> Array.sortDescending
+                                  |> Array.sort
+            //takes the lowest 10% of the values and averages them
             let topTenAverage   = Array.take (minima.Length / 10) minima
                                   |> Array.average
+            //sets every value that is higher than the cut off * multiplier to 0. and multplies it with -1 otherwise
             jaggedImage
             |> JaggedArray.map (fun x -> if x > topTenAverage * multiplier then 0. else -x)
 
 module Pipeline =
 
+    ///This function takes a string, an int, an int , a float and a float. It returns an int.
+    ///folderpath is the path to the folder containing the images to be analyzed. height and width are the dimensions of the rectangle
+    ///to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
+    ///multiplier increases or decreases the cut-off value for the thresholding function.
+
     let processAllImages folderPath height width radius multiplier=
+        //gets a string array containing all the filenames of files in the folder
         let imagePaths        = Directory.GetFiles folderPath
+        //loads the pixel values in a 2DArray
         let images            = imagePaths
                                 |> Array.map Image.loadTiff
+        //reduces the pictures to a rectangle with the chosen dimensions
         let selectedImages    = images
                                 |> Array.map (fun x -> Filter.rectangleSelectorCenter x height width)
+        //padds the images for the wavelet transformation and casts the int values in the 2DArray to floats
         let paddedImages      = selectedImages
                                 |> Array.map (fun x -> Image.paddTiff (Array2D.map float x))
+        //applies the wavelet transformation with a marr wavelet with chosen radius on every single point
         let transformedImages = paddedImages 
                                 |> Array.mapi (fun i x -> printfn "Apply wavelet to image %i of %i" (i + 1) paddedImages.Length
                                                           Maxima.C3DWT (MarrWavelet.marrWaveletCreator radius) x
                                               )
+        //sets values below or above the cut-off value to 0.
         let thresholdedImages = transformedImages
                                 |> Array.map (fun x -> Filter.thresholdMaxima x multiplier false)
+        //analyzes the thresholded picture for local maxima. A radius of 4 points around the local maximum is taken for the calculation.
         let localMaxima       = thresholdedImages
                                 |> Array.map (fun x -> Maxima.findLocalMaxima 4 (x 
                                                                                  |> JaggedArray.transpose
                                                                                  |> JaggedArray.toArray2D
                                                                                 )
                                              )
+        //visual representation of the analyzing process. This part can be safely removed if not wanted
         let charts            =
-            let jaggedTransfImg   = transformedImages
-                                    |> Array.map Array2D.toJaggedArray
+            //the images are brought into the correct format and orientation for the visual representation
             let jaggedSelectedImg = selectedImages
                                     |> Array.map Array2D.toJaggedArray
                                     |> Array.map Array.transpose
+            let jaggedTransfImg   = transformedImages
+                                    |> Array.map Array2D.toJaggedArray
+            //creates heatmaps of the original selected rectangle, the transformed version and the thresholded version
+            //a point chart of the found local maxima is laid over the thresholded version to indicate found cells
             Array.mapi (fun i x -> 
                             [Chart.Combine [Chart.Point localMaxima.[i]
                                             |> Chart.withMarkerStyle (5, "black");
@@ -326,6 +351,7 @@ module Pipeline =
                             |> Chart.withSize (1800., 600.)
                             |> Chart.Show
                 ) thresholdedImages
+        //an array containing the number of cells found in each image
         let cellCount = localMaxima
                         |> Array.map (fun x -> List.length x)
         cellCount
