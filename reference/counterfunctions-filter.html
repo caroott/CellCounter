@@ -14,7 +14,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=11" >
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/CellCounter/content/style.css" /> <!--/CellCounter-->
-    <link type="text/css" rel="stylesheet" href="/CellCounter/style/CSBstyles.css" /> <!--/CellCounter-->
+    <link type="text/css" rel="stylesheet" href="/CellCounter/styles/CSBstyles.css" /> <!--/CellCounter-->
     <script type="text/javascript" src="/CellCounter/content/tips.js"></script> <!--/CellCounter-->
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -63,7 +63,7 @@
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L197-197" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L208-208" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -78,14 +78,38 @@ are two opposing points on the desired circle as float tuples with the X value f
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
-            rectangleSelector(...)
+            groupQuadratCalculator(...)
           </code>
           <div class="tip" id="2">
+            <strong>Signature:</strong> cameraPixelSize:float&lt;MeasureOne&gt; -&gt; binning:float&lt;MeasureOne&gt; -&gt; magnification:float&lt;MeasureOne&gt; -&gt; cameraMount:float&lt;MeasureOne&gt; -&gt; int<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L198-198" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>This function takes a float, a float, a float and a float. It returns an int.
+cameraPixelSize is the pixel size of the camera used in �m. For a pixel size of 5x5 for example, you put in a 5.
+binning represents the binning used for the image. For a binning of 2x2
+you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective,
+cameraMount the magnification of the camera mount used.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
+            rectangleSelector(...)
+          </code>
+          <div class="tip" id="3">
             <strong>Signature:</strong> image:float [,] -&gt; (int * int) -&gt; (int * int) -&gt; float&lt;MeasureOne&gt; [] []<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L219-219" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L230-230" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -99,15 +123,15 @@ are the upper left and lower right points of the rectangle as int tuples with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
+          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
             rectangleSelectorCenter(...)
           </code>
-          <div class="tip" id="3">
+          <div class="tip" id="4">
             <strong>Signature:</strong> image:int [,] -&gt; height:int -&gt; width:int -&gt; int [,]<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L241-241" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L252-252" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -121,15 +145,15 @@ The center of the picture stays the same.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
+          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
             thresholdMaxima(...)
           </code>
-          <div class="tip" id="4">
+          <div class="tip" id="5">
             <strong>Signature:</strong> image:float [,] -&gt; multiplier:float -&gt; maximaPositive:bool -&gt; float&lt;MeasureOne&gt; [] []<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L289-289" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L300-300" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -143,15 +167,15 @@ and the boolean indicates whether the maxima are positive (true) or negative (fa
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
+          <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
             thresholdPercentile(...)
           </code>
-          <div class="tip" id="5">
+          <div class="tip" id="6">
             <strong>Signature:</strong> image:float [,] -&gt; percentileValue:float -&gt; maximaPositive:bool -&gt; float&lt;MeasureOne&gt; [] []<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L265-265" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L276-276" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -172,7 +196,6 @@ and the boolean indicates whether the maxima are positive (true) or negative (fa
             <li class="nav-header">CellCounter</li>
             <li><a href="/CellCounter/index.html">Home page</a></li>
             <li class="divider"></li>
-            <li><a href="http://nuget.org/packages/CellCounter">Get Library via NuGet</a></li>
             <li><a href="https://github.com/Joott/CellCounter">Source Code on GitHub</a></li>
             <li><a href="/CellCounter/license.html">License</a></li>
             <li><a href="/CellCounter/release-notes.html">Release Notes</a></li>

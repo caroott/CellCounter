@@ -15,7 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=11" >
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/CellCounter/content/style.css" /> <!--/CellCounter-->
-    <link type="text/css" rel="stylesheet" href="/CellCounter/style/CSBstyles.css" /> <!--/CellCounter-->
+    <link type="text/css" rel="stylesheet" href="/CellCounter/styles/CSBstyles.css" /> <!--/CellCounter-->
     <script type="text/javascript" src="/CellCounter/content/tips.js"></script> <!--/CellCounter-->
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -36,17 +36,16 @@
         <div class="span9" id="main">
           
 <h1><a name="CellCounter" class="anchor" href="#CellCounter">CellCounter</a></h1>
-<p>Documentation</p>
-<div class="row">
-  <div class="span1"></div>
-  <div class="span6">
-    <div class="well well-small" id="nuget">
-      The CellCounter library can be <a href="https://nuget.org/packages/CellCounter">installed from NuGet</a>:
-      <pre>PM> Install-Package CellCounter</pre>
-    </div>
-  </div>
-  <div class="span1"></div>
-</div>
+<h2><a name="Introduction" class="anchor" href="#Introduction">Introduction</a></h2>
+<p>This application contains functions to automatically count cells from pictures taken. The intention behind the application
+is to analyze pictures of cells taken under a microscope from a <a href="https://en.wikipedia.org/wiki/Hemocytometer">Neubauer counting chamber</a>
+to quickly calculate cell numbers for the colonies in question. While it is intended for pictures of a counting chamber, it can also be used to count colonies
+inside a petri dish, but this use needs more user input and calibration and results vary depending on the quality of the image taken.</p>
+<p>The idea for this counter is to apply a <a href="https://en.wikipedia.org/wiki/Mexican_hat_wavelet">Marr wavelet</a>, the 2D version of the
+Mexican hat wavelet, to the part of the image which should be analyzed. The effect of the wavelet is, that it enhances the parts of the picture
+which fit the shape of the wavelet, making it easier to distinguish those parts from the rest of the image.
+Because of its circular shape, it fits the form of cells really well, making it a good candidate for this application.
+For more informations about wavelets and their function, i can recommend this <a href="http://users.rowan.edu/~polikar/WTtutorial.html">Tutorial</a></p>
 <h2><a name="Example" class="anchor" href="#Example">Example</a></h2>
 <p>This example demonstrates using a function defined in this sample library.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
@@ -92,7 +91,6 @@ redistribution for both commercial and non-commercial purposes. For more informa
             <li class="nav-header">CellCounter</li>
             <li><a href="/CellCounter/index.html">Home page</a></li>
             <li class="divider"></li>
-            <li><a href="http://nuget.org/packages/CellCounter">Get Library via NuGet</a></li>
             <li><a href="https://github.com/Joott/CellCounter">Source Code on GitHub</a></li>
             <li><a href="/CellCounter/license.html">License</a></li>
             <li><a href="/CellCounter/release-notes.html">Release Notes</a></li>
