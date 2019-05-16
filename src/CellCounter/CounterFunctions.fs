@@ -190,6 +190,17 @@ module Maxima =
 
 module Filter =
 
+    ///This function takes a float, a float, a float and a float. It returns an int.
+    ///cameraPixelSize is the pixel size of the camera used in µm. For a pixel size of 5x5 for example, you put in a 5.
+    ///binning represents the binning used for the image. For a binning of 2x2
+    ///you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective, 
+    ///cameraMount the magnification of the camera mount used.
+    let groupQuadratCalculator cameraPixelSize binning magnification cameraMount =
+        //calculates the size of 1 pixel in µm
+        let pixelSize = (cameraPixelSize * binning) / (magnification * cameraMount)
+        //gives the width/lenght of a group quadrat in an improved neubauer counting chamber
+        int (200. / pixelSize)
+
     ///This function takes a float 2DArray, a float tuple and a float tuple. It returns a jagged array.
     ///image is the image which should be set to zero around a selected circle , pointAXY and pointBXY
     ///are two opposing points on the desired circle as float tuples with the X value first and the Y value second.
