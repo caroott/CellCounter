@@ -56,10 +56,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
-            processAllImages(...)
+            processImage(...)
           </code>
           <div class="tip" id="12">
-            <strong>Signature:</strong> folderPath:string -&gt; height:int -&gt; width:int -&gt; radius:float -&gt; multiplier:float -&gt; int []<br />
+            <strong>Signature:</strong> filePath:string -&gt; height:int -&gt; width:int -&gt; radius:float -&gt; multiplier:float -&gt; int * (type)<br />
                                   </div>
         </td>
         <td class="xmldoc">
@@ -67,8 +67,31 @@
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes a string, an int, an int , a float and a float. It returns an int.
-folderpath is the path to the folder containing the images to be analyzed. height and width are the dimensions of the rectangle
+          <p>This function takes a string, an int, an int , a float and a float. It returns a tuple of an int and a GenericChart.
+filePath is the path to the image to be analyzed. height and width are the dimensions of the rectangle
+to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
+multiplier increases or decreases the cut-off value for the thresholding function.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+            processImages(...)
+          </code>
+          <div class="tip" id="13">
+            <strong>Signature:</strong> folderPath:string -&gt; height:int -&gt; width:int -&gt; radius:float -&gt; multiplier:float -&gt; (int * (type)) []<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L383-383" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>This function takes an array of strings, an int, an int , a float and a float. It returns an array of tuples of an int and a GenericChart.
+folderPath is the path to the images to be analyzed. height and width are the dimensions of the rectangle
 to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
 multiplier increases or decreases the cut-off value for the thresholding function.</p>
 
