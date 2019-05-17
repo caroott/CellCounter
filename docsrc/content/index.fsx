@@ -1,17 +1,17 @@
 (*** hide ***)
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\FSharpAux\lib\netstandard2.0\FSharpAux.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\FSharp.Stats\lib\netstandard2.0\FSharp.Stats.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\Microsoft.Xaml\lib\System.Xaml.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\Microsoft.Xaml\lib\PresentationCore.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\Microsoft.Xaml\lib\WindowsBase.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\FSharp.Plotly\lib\netstandard2.0\FSharp.Plotly.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\src\CellCounter\bin\Release\netstandard2.0\CellCounter.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\NETStandard.Library\build\netstandard2.0\ref\netstandard.dll"
+//#r @"C:\Users\Student\source\repos\CellCounter\packages\FSharpAux\lib\netstandard2.0\FSharpAux.dll"
+//#r @"C:\Users\Student\source\repos\CellCounter\packages\FSharp.Stats\lib\netstandard2.0\FSharp.Stats.dll"
+//#r @"C:\Users\Student\source\repos\CellCounter\packages\Microsoft.Xaml\lib\System.Xaml.dll"
+
+//#r @"C:\Users\Student\source\repos\CellCounter\packages\Microsoft.Xaml\lib\PresentationCore.dll"
+//#r @"C:\Users\Student\source\repos\CellCounter\packages\Microsoft.Xaml\lib\WindowsBase.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\lib\Formatting\FSharp.Plotly.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\src\CellCounter\bin\Release\netstandard2.0\CellCounter.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\packages\NETStandard.Library\build\netstandard2.0\ref\netstandard.dll"
 
 open CounterFunctions
-open FSharp.Plotly
 (**
 CellCounter
 ======================
@@ -41,12 +41,17 @@ number of counted cells at the first position and a chart at the second position
 and transformed picture. The second image is the transformed image and the thrid one is the original imagepart which was analyzed with the recognized cells overlaid.
 The images are shown as heatmaps.
 *)
+open FSharp.Plotly
 
 let dimension = Filter.groupQuadratCalculator 6.45 2. 20. 2.
 
-let processedImage = Pipeline.processImage @"C:\Users\Student\source\repos\CellCounter\docsrc\files\img\1.tif" dimension dimension 20. 0.2
+let processedImage = Image.loadTiff @"C:\Users\Student\source\repos\CellCounter\docsrc\files\img\1.tif"
 
-(*** include-value:(snd processedImage)***)
+let chart = Chart.Point [1,1 ; 2, 2; 3, 3]
+
+
+(*** include-value:chart ***)
+
 
 (** 
 Samples & documentation

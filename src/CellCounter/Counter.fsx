@@ -1,12 +1,12 @@
 ﻿
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\FSharpAux\lib\netstandard2.0\FSharpAux.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\FSharp.Stats\lib\netstandard2.0\FSharp.Stats.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\Microsoft.Xaml\lib\System.Xaml.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\Microsoft.Xaml\lib\PresentationCore.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\Microsoft.Xaml\lib\WindowsBase.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\FSharp.Plotly\lib\netstandard2.0\FSharp.Plotly.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\src\CellCounter\bin\Release\netstandard2.0\CellCounter.dll"
-#r @"C:\Users\Student\source\repos\CellCounterOld\packages\NETStandard.Library\build\netstandard2.0\ref\netstandard.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\packages\FSharpAux\lib\netstandard2.0\FSharpAux.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\packages\FSharp.Stats\lib\netstandard2.0\FSharp.Stats.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\packages\Microsoft.Xaml\lib\System.Xaml.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\packages\Microsoft.Xaml\lib\PresentationCore.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\packages\Microsoft.Xaml\lib\WindowsBase.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\packages\FSharp.Plotly\lib\netstandard2.0\FSharp.Plotly.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\src\CellCounter\bin\Release\netstandard2.0\CellCounter.dll"
+#r @"C:\Users\Student\source\repos\CellCounter\packages\NETStandard.Library\build\netstandard2.0\ref\netstandard.dll"
 
 open CounterFunctions
 open FSharp.Plotly
