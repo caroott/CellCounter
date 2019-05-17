@@ -326,7 +326,7 @@ module Filter =
 
 module Pipeline =
 
-    ///This function takes a string, an int, an int , a float and a float. It returns an int.
+    ///This function takes a string, an int, an int , a float and a float. It returns a tuple of an int and a GenericChart.
     ///filePath is the path to the image to be analyzed. height and width are the dimensions of the rectangle
     ///to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
     ///multiplier increases or decreases the cut-off value for the thresholding function.
@@ -347,7 +347,7 @@ module Pipeline =
                                                           |> JaggedArray.transpose
                                                           |> JaggedArray.toArray2D
                                                          )
-        //visual representation of the analyzing process. This part can be safely removed if not wanted
+        //visual representation of the analyzing process. This part can be safely removed if not needed
         let chart             =
             //the images are brought into the correct format and orientation for the visual representation
             let jaggedSelectedImg = selectedImage
@@ -374,3 +374,16 @@ module Pipeline =
         let cellCount = List.length localMaxima
 
         cellCount, chart
+
+    ///This function takes an array of strings, an int, an int , a float and a float. It returns an array of tuples of an int and a GenericChart.
+    ///folderPath is the path to the images to be analyzed. height and width are the dimensions of the rectangle
+    ///to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
+    ///multiplier increases or decreases the cut-off value for the thresholding function.
+
+    let processImages folderPath height width radius multiplier =
+        //gets a string array containing all the filenames of files in the folder
+        let imagePaths  = Directory.GetFiles folderPath
+        //applies the processImage function on all strings in the array
+        let results     =
+            Array.map (fun path -> processImage path height width radius multiplier) imagePaths
+        results
