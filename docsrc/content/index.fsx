@@ -7,32 +7,29 @@
 CellCounter
 ======================
 
-Documentation
+Introduction
+-------
 
-<div class="row">
-  <div class="span1"></div>
-  <div class="span6">
-    <div class="well well-small" id="nuget">
-      The CellCounter library can be <a href="https://nuget.org/packages/CellCounter">installed from NuGet</a>:
-      <pre>PM> Install-Package CellCounter</pre>
-    </div>
-  </div>
-  <div class="span1"></div>
-</div>
+This application contains functions to automatically count cells from pictures taken. The intention behind the application
+is to analyze pictures of cells taken under a microscope from a [Neubauer counting chamber](https://en.wikipedia.org/wiki/Hemocytometer)
+to quickly calculate cell numbers for the colonies in question. While it is intended for pictures of a counting chamber, it can also be used to count colonies
+inside a petri dish, but this use needs more user input and calibration and results vary depending on the quality of the image taken.
+
+The idea for this counter is to apply a [Marr wavelet](https://en.wikipedia.org/wiki/Mexican_hat_wavelet), the 2D version of the
+Mexican hat wavelet, to the part of the image which should be analyzed. The effect of the wavelet is, that it enhances the parts of the picture
+which fit the shape of the wavelet, making it easier to distinguish those parts from the rest of the image.
+Because of its circular shape, it fits the form of cells really well, making it a good candidate for this application.
+For more informations about wavelets and their function, i can recommend this [Tutorial](http://users.rowan.edu/~polikar/WTtutorial.html)
+
+
 
 Example
 -------
 
-This example demonstrates using a function defined in this sample library.
+This is an example of an analyzed picture. On the left you can see the end result, where all values below a certain threshold have been removed and the maxima have been located (black dots).
+In the middle is the picture after the wavelet transformation, and on the right is the original picture. The pictures are shown as heatmaps.
 
-*)
-#r "CellCounter.dll"
-open CellCounter
-
-printfn "hello = %i" <| Library.hello 0
-
-(**
-Some more info
+![Plot]("C:\Users\Student\source\repos\CellCounter\docsrc\files\img\Capture.PNG")
 
 Samples & documentation
 -----------------------
