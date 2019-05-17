@@ -5,10 +5,10 @@ open FSharpAux
 open FSharp.Stats
 open System
 open System.IO
-open System.Windows.Media
-open System.Windows.Media.Imaging
 open FSharp.Collections
 open FSharp.Plotly
+open System.Windows.Media
+open System.Windows.Media.Imaging
 
 module MarrWavelet =
     
