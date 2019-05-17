@@ -1,13 +1,13 @@
 
 namespace CounterFunctions
 
+open FSharpAux
+open FSharp.Stats
 open System
 open System.IO
 open System.Windows.Media
 open System.Windows.Media.Imaging
 open FSharp.Collections
-open FSharpAux
-open FSharp.Stats
 open FSharp.Plotly
 
 module MarrWavelet =

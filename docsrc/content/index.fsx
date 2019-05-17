@@ -1,8 +1,17 @@
 (*** hide ***)
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
-#I "../../bin"
+#r @"C:\Users\Student\source\repos\CellCounterOld\packages\NETStandard.Library\build\netstandard2.0\ref\netstandard.dll"
+#r @"C:\Users\Student\source\repos\CellCounterOld\packages\FSharpAux\lib\netstandard2.0\FSharpAux.dll"
+#r @"C:\Users\Student\source\repos\CellCounterOld\packages\FSharp.Stats\lib\netstandard2.0\FSharp.Stats.dll"
+#r @"C:\Users\Student\source\repos\CellCounterOld\packages\Microsoft.Xaml\lib\System.Xaml.dll"
+#r @"C:\Users\Student\source\repos\CellCounterOld\packages\Microsoft.Xaml\lib\PresentationCore.dll"
+#r @"C:\Users\Student\source\repos\CellCounterOld\packages\Microsoft.Xaml\lib\WindowsBase.dll"
+#r @"C:\Users\Student\source\repos\CellCounterOld\src\CellCounter\bin\Release\netstandard2.0\CellCounter.dll"
+#r @"C:\Users\Student\source\repos\CellCounterOld\packages\FSharp.Plotly\lib\netstandard2.0\FSharp.Plotly.dll"
 
+open CounterFunctions
+open FSharp.Plotly
 (**
 CellCounter
 ======================
@@ -26,11 +35,18 @@ For more informations about wavelets and their function, i can recommend this [T
 Example
 -------
 
-This is an example of an analyzed picture. On the left you can see the end result, where all values below a certain threshold have been removed and the maxima have been located (black dots).
-In the middle is the picture after the wavelet transformation, and on the right is the original picture. The pictures are shown as heatmaps.
+This is an example of how to analyze a picture. Filter.groupQuadratCalculator can be used to calculate the dimensions of the square to be counted in pixels using
+the specifications of the microscope and camera. Pipeline.processImage is then used to analyze the picture from the given path. The output is a tuple with the
+number of counted cells at the first position and a chart at the second position. The chart is a visualization of the image processing. The first image is the thresholded
+and transformed picture. The second image is the transformed image and the thrid one is the original imagepart which was analyzed with the recognized cells overlaid.
+The images are shown as heatmaps.
+*)
 
-![Plot]("C:\Users\Student\source\repos\CellCounter\docsrc\files\img\Capture.PNG")
+let dimension = Filter.groupQuadratCalculator 6.45 2. 20. 2.
 
+let processedImage = Pipeline.processImage @"C:\Users\Student\source\repos\CellCounter\docsrc\files\img\1.tif" dimension dimension 20. 0.2
+
+(** 
 Samples & documentation
 -----------------------
 
