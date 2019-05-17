@@ -55,10 +55,14 @@ The images are shown as heatmaps.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="id">dimension</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="m">Filter</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="id">groupQuadratCalculator</span> <span class="n">6.45</span> <span class="n">2.</span> <span class="n">20.</span> <span class="n">2.</span>
 
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 7)" onmouseover="showTip(event, 'fs7', 7)" class="id">processedImage</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 8)" onmouseover="showTip(event, 'fs8', 8)" class="m">Pipeline</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 9)" onmouseover="showTip(event, 'fs9', 9)" class="id">processImage</span> <span class="s">@&quot;C:\Users\Student\source\repos\CellCounter\docsrc\files\img\1.tif&quot;</span> <span onmouseout="hideTip(event, 'fs4', 10)" onmouseover="showTip(event, 'fs4', 10)" class="id">dimension</span> <span onmouseout="hideTip(event, 'fs4', 11)" onmouseover="showTip(event, 'fs4', 11)" class="id">dimension</span> <span class="n">20.</span> <span class="n">0.2</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 12)" onmouseover="showTip(event, 'fs10', 12)" class="id">chart</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 13)" onmouseover="showTip(event, 'fs11', 13)" class="fn">snd</span> <span onmouseout="hideTip(event, 'fs7', 14)" onmouseover="showTip(event, 'fs7', 14)" class="id">processedImage</span>
 </code></pre></td>
 </tr>
 </table>
@@ -93,6 +97,8 @@ redistribution for both commercial and non-commercial purposes. For more informa
 <div class="tip" id="fs7">val processedImage : int * GenericChart.GenericChart</div>
 <div class="tip" id="fs8">module Pipeline<br /><br />from CounterFunctions</div>
 <div class="tip" id="fs9">val processImage : filePath:string -&gt; height:int -&gt; width:int -&gt; radius:float -&gt; multiplier:float -&gt; int * GenericChart.GenericChart</div>
+<div class="tip" id="fs10">val chart : GenericChart.GenericChart</div>
+<div class="tip" id="fs11">val snd : tuple:(&#39;T1 * &#39;T2) -&gt; &#39;T2</div>
 
         </div>
         <div class="span3">
