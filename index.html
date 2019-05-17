@@ -47,20 +47,9 @@ which fit the shape of the wavelet, making it easier to distinguish those parts 
 Because of its circular shape, it fits the form of cells really well, making it a good candidate for this application.
 For more informations about wavelets and their function, i can recommend this <a href="http://users.rowan.edu/~polikar/WTtutorial.html">Tutorial</a></p>
 <h2><a name="Example" class="anchor" href="#Example">Example</a></h2>
-<p>This example demonstrates using a function defined in this sample library.</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="pp">#r</span> <span class="s">&quot;CellCounter.dll&quot;</span>
-<span class="k">open</span> <span class="id">CellCounter</span>
-
-<span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="fn">printfn</span> <span class="s">&quot;hello = </span><span class="pf">%i</span><span class="s">&quot;</span> <span class="o">&lt;|</span> <span class="id">Library</span><span class="pn">.</span><span class="id">hello</span> <span class="n">0</span>
-</code></pre></td>
-</tr>
-</table>
-<p>Some more info</p>
+<p>This is an example of an analyzed picture. On the left you can see the end result, where all values below a certain threshold have been removed and the maxima have been located (black dots).
+In the middle is the picture after the wavelet transformation, and on the right is the original picture. The pictures are shown as heatmaps.</p>
+<p><img src="C:\Users\Student\OneDrive\MP_Biotech\VP_Timo\CellCounterPictures\Capture.PNG" alt="Plot" /></p>
 <h2><a name="Samples-amp-documentation" class="anchor" href="#Samples-amp-documentation">Samples &amp; documentation</a></h2>
 <p>The library comes with comprehensible documentation.
 It can include tutorials automatically generated from <code>*.fsx</code> files in <a href="https://github.com/fsprojects/CellCounter/tree/master/docs/content">the content folder</a>.
@@ -82,7 +71,6 @@ also want to read the <a href="https://github.com/fsprojects/CellCounter/blob/ma
 redistribution for both commercial and non-commercial purposes. For more information see the
 <a href="https://github.com/fsprojects/CellCounter/blob/master/LICENSE.txt">License file</a> in the GitHub repository.</p>
 
-<div class="tip" id="fs1">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
 
         </div>
         <div class="span3">
