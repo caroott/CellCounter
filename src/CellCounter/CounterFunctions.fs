@@ -1,14 +1,14 @@
 
 namespace CounterFunctions
 
+open System
+open System.IO
+open System.Windows.Media
+open System.Windows.Media.Imaging
 open FSharp.Collections
 open FSharpAux
 open FSharp.Stats
 open FSharp.Plotly
-open System.Windows.Media
-open System.Windows.Media.Imaging
-open System.IO
-open System
 
 module MarrWavelet =
     
@@ -327,63 +327,50 @@ module Filter =
 module Pipeline =
 
     ///This function takes a string, an int, an int , a float and a float. It returns an int.
-    ///folderpath is the path to the folder containing the images to be analyzed. height and width are the dimensions of the rectangle
+    ///filePath is the path to the image to be analyzed. height and width are the dimensions of the rectangle
     ///to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
     ///multiplier increases or decreases the cut-off value for the thresholding function.
 
-    let processAllImages folderPath height width radius multiplier=
-        //gets a string array containing all the filenames of files in the folder
-        let imagePaths        = Directory.GetFiles folderPath
+    let processImage filePath height width radius multiplier=
         //loads the pixel values in a 2DArray
-        let images            = imagePaths
-                                |> Array.map Image.loadTiff
-        //reduces the pictures to a rectangle with the chosen dimensions
-        let selectedImages    = images
-                                |> Array.map (fun x -> Filter.rectangleSelectorCenter x height width)
-        //padds the images for the wavelet transformation and casts the int values in the 2DArray to floats
-        let paddedImages      = selectedImages
-                                |> Array.map (fun x -> Image.paddTiff (Array2D.map float x))
+        let image             = Image.loadTiff filePath
+        //reduces the picture to a rectangle with the chosen dimensions
+        let selectedImage     = Filter.rectangleSelectorCenter image height width
+        //padds the image for the wavelet transformation and casts the int values in the 2DArray to floats
+        let paddedImage       = selectedImage |> fun x -> Image.paddTiff (Array2D.map float x)
         //applies the wavelet transformation with a marr wavelet with chosen radius on every single point
-        let transformedImages = paddedImages 
-                                |> Array.mapi (fun i x -> printfn "Apply wavelet to image %i of %i" (i + 1) paddedImages.Length
-                                                          Maxima.C3DWT (MarrWavelet.marrWaveletCreator radius) x
-                                              )
+        let transformedImage  = Maxima.C3DWT (MarrWavelet.marrWaveletCreator radius) paddedImage
         //sets values below or above the cut-off value to 0.
-        let thresholdedImages = transformedImages
-                                |> Array.map (fun x -> Filter.thresholdMaxima x multiplier false)
+        let thresholdedImage  = Filter.thresholdMaxima transformedImage multiplier false
         //analyzes the thresholded picture for local maxima. A radius of 4 points around the local maximum is taken for the calculation.
-        let localMaxima       = thresholdedImages
-                                |> Array.map (fun x -> Maxima.findLocalMaxima 4 (x 
-                                                                                 |> JaggedArray.transpose
-                                                                                 |> JaggedArray.toArray2D
-                                                                                )
-                                             )
+        let localMaxima       = Maxima.findLocalMaxima 4 (thresholdedImage 
+                                                          |> JaggedArray.transpose
+                                                          |> JaggedArray.toArray2D
+                                                         )
         //visual representation of the analyzing process. This part can be safely removed if not wanted
-        let charts            =
+        let chart             =
             //the images are brought into the correct format and orientation for the visual representation
-            let jaggedSelectedImg = selectedImages
-                                    |> Array.map Array2D.toJaggedArray
-                                    |> Array.map Array.transpose
-            let jaggedTransfImg   = transformedImages
-                                    |> Array.map Array2D.toJaggedArray
+            let jaggedSelectedImg = selectedImage
+                                    |> Array2D.toJaggedArray
+                                    |> Array.transpose
+            let jaggedTransfImg   = transformedImage
+                                    |> Array2D.toJaggedArray
             //creates heatmaps of the original selected rectangle, the transformed version and the thresholded version
             //a point chart of the found local maxima is laid over the thresholded version to indicate found cells
-            Array.mapi (fun i x -> 
-                            [Chart.Combine [Chart.Point localMaxima.[i]
-                                            |> Chart.withMarkerStyle (5, "black");
-                                            Chart.Heatmap (x, Showscale = false)
-                                            |> Chart.withX_AxisStyle ("Thresholded and counted data")
-                                           ];
-                             Chart.Heatmap (jaggedTransfImg.[i], Showscale = false)
-                             |> Chart.withX_AxisStyle ("Transformed data");
-                             Chart.Heatmap (jaggedSelectedImg.[i], Showscale = false)
-                             |> Chart.withX_AxisStyle ("Original data")
-                            ] 
-                            |> Chart.Stack 3
-                            |> Chart.withSize (1800., 600.)
-                            |> Chart.Show
-                ) thresholdedImages
-        //an array containing the number of cells found in each image
-        let cellCount = localMaxima
-                        |> Array.map (fun x -> List.length x)
-        cellCount
+            [
+            Chart.Heatmap (thresholdedImage, Showscale = false)
+            |> Chart.withX_AxisStyle ("Thresholded data")
+            Chart.Heatmap (jaggedTransfImg, Showscale = false)
+            |> Chart.withX_AxisStyle ("Transformed data");
+            Chart.Combine [Chart.Point localMaxima
+                            |> Chart.withMarkerStyle (5, "black");
+                            Chart.Heatmap (jaggedSelectedImg, Showscale = false)
+                            |> Chart.withX_AxisStyle ("Original data with recognized cells overlaid")
+                          ]
+            ]
+            |> Chart.Stack 3
+            |> Chart.withSize (1800., 600.)
+        //number of cells found in the image
+        let cellCount = List.length localMaxima
+
+        cellCount, chart
