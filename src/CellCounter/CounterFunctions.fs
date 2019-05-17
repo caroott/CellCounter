@@ -371,10 +371,13 @@ module Pipeline =
             Array.mapi (fun i x -> 
                             [Chart.Combine [Chart.Point localMaxima.[i]
                                             |> Chart.withMarkerStyle (5, "black");
-                                            Chart.Heatmap x
-                                           ]; 
-                             Chart.Heatmap jaggedTransfImg.[i];
-                             Chart.Heatmap jaggedSelectedImg.[i]
+                                            Chart.Heatmap (x, Showscale = false)
+                                            |> Chart.withX_AxisStyle ("Thresholded and counted data")
+                                           ];
+                             Chart.Heatmap (jaggedTransfImg.[i], Showscale = false)
+                             |> Chart.withX_AxisStyle ("Transformed data");
+                             Chart.Heatmap (jaggedSelectedImg.[i], Showscale = false)
+                             |> Chart.withX_AxisStyle ("Original data")
                             ] 
                             |> Chart.Stack 3
                             |> Chart.withSize (1800., 600.)
