@@ -12,6 +12,7 @@ open System
 open System.IO
 open CounterFunctions
 open FSharp.Plotly
+open CounterFunctions
 
 let dimension = Filter.groupQuadratCalculator 6.45 2. 20. 2.
 
