@@ -3,42 +3,13 @@ namespace CounterFunctions
 
 open FSharpAux
 open FSharp.Stats
+open BioFSharp.ImgP
 open System
 open System.IO
 open FSharp.Collections
 open FSharp.Plotly
 open System.Windows.Media
 open System.Windows.Media.Imaging
-
-module MarrWavelet =
-    
-    //The functions in this module are taken from BioFSharp.ImgP
-    
-    type MarrWavelet =  {
-        Scale           : float    
-        Zero            : float    
-        Minimum         : float    
-        Diameter        : float    
-        Values          : float [,]
-        PadAreaRadius   : int      
-        LMdistance      : int      
-        zFilterdist     : float    
-                        }
-
-    let marrWaveletCreator (radius : float) = 
-        let functionMarr x (y:float) s = (1./(Math.PI*s**2.))*(1.-(x**2.+y**2.)/(2.*s**2.))*(Math.E**(-((x**2.+y**2.)/(2.*s**2.))))
-        let functionValuesMarr scale list= Array.map (fun y -> (Array.map (fun x -> functionMarr x y scale) list)) list
-
-        {
-        Scale           = 0.7071 * (radius )
-        Zero            = radius   
-        Minimum         = radius*2.
-        Diameter        = radius*2.
-        Values          = Array2D.ofJaggedArray (functionValuesMarr (0.7071 * (radius)) [|-(ceil (3. * radius + 2.))..(ceil(3. * radius + 2.))|])
-        PadAreaRadius   = ceil (3. * radius + 2.) |> int 
-        LMdistance      = (1.2619 * (radius) + 1.3095) |> round 0 |> int 
-        zFilterdist     = 3.
-        }
 
 module Image =
 
@@ -100,7 +71,7 @@ module Maxima =
     ///marr is a MarrWavelet, which can be created by the marrWaveletCreator. image is the image which should be transformed with the marr wavelet.
     ///The output is the transformed image.
 
-    let inline C3DWT (marr: MarrWavelet.MarrWavelet) (image:'a[,]) =
+    let inline C3DWT (marr: Marr.MarrWavelet) (image:'a[,]) =
         //the length of both sides from the picture substracting the padding area
         let resolutionPixelfst = (Array2D.length1 image) - (100 * 2)
         let resolutionPixelsnd = (Array2D.length2 image) - (100 * 2)
@@ -339,7 +310,7 @@ module Pipeline =
         //padds the image for the wavelet transformation and casts the int values in the 2DArray to floats
         let paddedImage       = selectedImage |> fun x -> Image.paddTiff (Array2D.map float x)
         //applies the wavelet transformation with a marr wavelet with chosen radius on every single point
-        let transformedImage  = Maxima.C3DWT (MarrWavelet.marrWaveletCreator radius) paddedImage
+        let transformedImage  = Maxima.C3DWT (Marr.marrWaveletCreator radius) paddedImage
         //sets values below or above the cut-off value to 0.
         let thresholdedImage  = Filter.thresholdMaxima transformedImage multiplier false
         //analyzes the thresholded picture for local maxima. A radius of 4 points around the local maximum is taken for the calculation.
