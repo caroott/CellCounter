@@ -11,12 +11,13 @@ open FSharp.Plotly
 open System.Windows.Media
 open System.Windows.Media.Imaging
 
+
+///Functions to load and padd the image.
 module Image =
 
     //The functions in this module are taken from BioFSharp.ImgP and modified for use in this project
 
-    ///This function takes a string. It returns an int 2DArray.
-    ///The returned 2DArray is a representation of the pixels in the file given by the filepath.
+    ///Returns a 2DArray representing the pixels from the image at the filepath.
 
     let loadTiff filePath=
         let stream = File.OpenRead(filePath)
@@ -41,8 +42,7 @@ module Image =
         )
         |> Seq.head
 
-    ///This function takes a 2DArray. It returns a 2DArray.
-    ///The returned 2DArray is padded in both dimensions with random values for the wavelet transformation.
+    ///Padds a 2DArray in both dimensions with random values for the wavelet transformation.
 
     let paddTiff (data: 'a[,])=
         let padArray2DWithRandom (rnd:System.Random) (offset:int) (arr:'a[,]) =
@@ -63,11 +63,12 @@ module Image =
             |> padArray2DWithRandom rnd 100
         paddedRawData
 
+///Contains wavelet transformation and local maxima finding.
 module Maxima =
     
     //The functions in this module are taken from BioFSharp.ImgP and modified for use in this project
 
-    ///This function takes a MarrWavelet and a 2DArray. It returns a float 2DArray.
+    ///Calculates the wavelet transformation for every pixel with the given wavelet.
     ///marr is a MarrWavelet, which can be created by the marrWaveletCreator. image is the image which should be transformed with the marr wavelet.
     ///The output is the transformed image.
 
@@ -106,7 +107,7 @@ module Maxima =
         deletePaddingArea
 
 
-    ///This function takes an int and a float 2DArray. It returns a float tuple list.
+    ///Calculates the local maxima in the given 2DArray.
     ///image is the image in which the local maxima should be found. dist is the radius for points around the checked point which should also belong to the
     ///local maximum. The returned tuple list contains the coordinates of the found maxima.
 
@@ -159,9 +160,11 @@ module Maxima =
                 else arrayOfMaxima.[i,j] <- 0.
         allmaximaArray arrayOfMaxima
 
+
+///Functions to filter all unwanted parts of the picture.
 module Filter =
 
-    ///This function takes a float, a float, a float and a float. It returns an int.
+    ///Calculates the dimension in pixels for a square in an improved Neubauer counting chamber
     ///cameraPixelSize is the pixel size of the camera used in µm. For a pixel size of 5x5 for example, you put in a 5.
     ///binning represents the binning used for the image. For a binning of 2x2
     ///you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective, 
@@ -186,7 +189,7 @@ module Filter =
         //gives the radius used for the wavelet
         (cellDiameter / pixelSize) / 2.
 
-    ///This function takes a float 2DArray, a float tuple and a float tuple. It returns a jagged array.
+    ///Selects a circular part of the image based on the given coordinates.
     ///image is the image which should be set to zero around a selected circle , pointAXY and pointBXY
     ///are two opposing points on the desired circle as float tuples with the X value first and the Y value second.
 
@@ -208,7 +211,7 @@ module Filter =
                                    else value))
         cutPicture
 
-    ///This function takes a float 2DArray, an int tuple and an int tuple. It returns a jagged array.
+    ///Selects a rectangular part of the image based on the given coordinates.
     ///image is the image which should be set to zero around a selected rectangle , lowerLeftXY and lowerRightXY 
     ///are the upper left and lower right points of the rectangle as int tuples with the X value first and the Y value second.
 
@@ -230,7 +233,7 @@ module Filter =
                                     else    value))
         selectPicture
  
-    ///This function takes an int 2DArray, an int and an int. It returns an int 2DArray.
+    ///Selects a rectangular part of the image based on the center with the given dimensions.
     ///image is the image which should be cut into the desired dimensions, height and width are the dimensions of the new 2DArray (picture).
     ///The center of the picture stays the same.
 
@@ -254,7 +257,7 @@ module Filter =
                               |> Array.filter (fun x -> not (Array.isEmpty x))
         JaggedArray.toArray2D selectPicture
 
-    ///This function takes a float 2DArray, a float and a boolean. It returns a jagged array.
+    ///Sets every point below a chosen percentile to 0.
     ///image is the image which should be thresholded, percentile is the percentage of values which should be thresholded
     ///and the boolean indicates whether the maxima are positive (true) or negative (false).
 
@@ -278,7 +281,7 @@ module Filter =
             |> JaggedArray.map (fun x -> if x > cutOffValue then 0. else -x)
 
 
-    ///This function takes a float 2DArray, a float and a boolean. It returns a jagged array.
+    ///Sets every point below a chosen multiple of the highest points to 0.
     ///image is the image which should be thresholded, multiplier can be used to increase the cut-off value
     ///and the boolean indicates whether the maxima are positive (true) or negative (false)
 
@@ -309,12 +312,15 @@ module Filter =
             jaggedImage
             |> JaggedArray.map (fun x -> if x > topTenAverage * multiplier then 0. else -x)
 
+
+///Example functions of how to use the functions in the other modules. They can be modiefied according to the specific needs.
 module Pipeline =
 
-    ///This function takes a string, an int, an int , a float and a float. It returns a tuple of an int and a GenericChart.
+    ///Applies the image processing steps to count images from an impoved Neubauer counting chamber.
     ///filePath is the path to the image to be analyzed. height and width are the dimensions of the rectangle
     ///to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
-    ///multiplier increases or decreases the cut-off value for the thresholding function.
+    ///multiplier increases or decreases the cut-off value for the thresholding function. In addition to the counting result
+    ///it also returns a chart tupled with it.
 
     let processImage filePath height width radius multiplier=
         //loads the pixel values in a 2DArray
@@ -360,7 +366,7 @@ module Pipeline =
 
         cellCount, chart
 
-    ///This function takes an array of strings, an int, an int , a float and a float. It returns an array of tuples of an int and a GenericChart.
+    ///Applies the processing function for a single image to a folder of images.
     ///folderPath is the path to the images to be analyzed. height and width are the dimensions of the rectangle
     ///to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
     ///multiplier increases or decreases the cut-off value for the thresholding function.
