@@ -51,10 +51,13 @@ let combinedChart =
     |> Chart.withSize (900., 900.)
 
 (**
+Counting results
+----------------
+
 To determine the effectiveness of the Cell Counter, I compared it to two different other counting methods. One of them was manual counting using the 
 [Neubauer counting chamber](https://en.wikipedia.org/wiki/Hemocytometer), the other was counting the cells with a [Coulter Counter](https://en.wikipedia.org/wiki/Coulter_counter).
-For that i took a cell suspensio with ~1.35 * 10^7 cells and set up a serial dilution with always halving the amount up to 1:16.
-I took 3 measurements for each timepoint. One measurement for the Cell Counter and the manual counting consists of three seperate images.
+For that i took a cell suspension with ~1.35 * 10^7 cells and set up a serial dilution by always halving the amount up to 1:16.
+I took 3 measurements for each timepoint. One measurement for both, the Cell Counter and the manual counting consists of three seperate images.
 
 Here you can see the result of those measurements:
 *)
@@ -89,11 +92,12 @@ The Y-error bar represents the standard deviation of the 3 measurements taken at
 
 As you can see in this little test, all three methods give comparable results regarding the amount of cells/ml. While the manual counting of cells is
 a tedious approach, the Cell Counter has it's merits in efficiency compared to the Coulter Counter. All it needs are pictures taken under a microscope, which 
-is easily done, even more so if it is done for more than one culture at once since it is only swapping of objectives then. It is also really usefull for the
-cell counting in bioreactors. Since those have to be monitored constantly for possible infections under the microscope with picture documentation, one can use those
+is easily done, even more so if it is done for more than one culture at once since it is only swapping of objectives then. It is also usefull for the
+cell counting in bioreactors. Bioreactors have to be monitored constantly for possible infections under the microscope with picture documentation, so one can use those
 pictures as input for the Cell Counter at the same time.
 
 Experiment Data
+---------------
 
 For those of you, who want to replicate the experiment, here are the parameters used in the functions and the picture data:
 
@@ -103,7 +107,7 @@ Camera and microscope
 * Binning        : 2x2
 * Camera Mount   : 2x
 * Magnification  : 20x
-</br>
+
 Cells
 
 * Diameter: 9.5 microns
@@ -112,7 +116,7 @@ Cells
 
 The corresponding code looks like this:
 *)
-let dimension = Filter.groupQuadratCalculator 6.45 2. 20. 2.
+let dimension = Filter.squareCalculator 6.45 2. 20. 2.
 
 let wvRadius = Filter.cellRadiusCalculator 9.5 6.45 2. 20. 2.
 

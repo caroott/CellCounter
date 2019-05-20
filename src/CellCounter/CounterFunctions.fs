@@ -167,10 +167,10 @@ module Filter =
     ///you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective, 
     ///cameraMount the magnification of the camera mount used.
 
-    let groupQuadratCalculator cameraPixelSize binning magnification cameraMount =
+    let squareCalculator cameraPixelSize binning magnification cameraMount =
         //calculates the size of 1 pixel in µm
         let pixelSize = (cameraPixelSize * binning) / (magnification * cameraMount)
-        //gives the width/lenght of a group quadrat in an improved neubauer counting chamber
+        //gives the width/lenght of a group square in an improved neubauer counting chamber
         int (200. / pixelSize)
 
     ///Calculates the radius for the wavelet based on the cell diameter.
