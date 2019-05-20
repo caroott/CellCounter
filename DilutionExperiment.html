@@ -34,16 +34,17 @@
       <div class="row">
         <div class="span9" id="main">
           
+<h2><a name="Counting-results" class="anchor" href="#Counting-results">Counting results</a></h2>
 <p>To determine the effectiveness of the Cell Counter, I compared it to two different other counting methods. One of them was manual counting using the
 <a href="https://en.wikipedia.org/wiki/Hemocytometer">Neubauer counting chamber</a>, the other was counting the cells with a <a href="https://en.wikipedia.org/wiki/Coulter_counter">Coulter Counter</a>.
-For that i took a cell suspensio with ~1.35 * 10^7 cells and set up a serial dilution with always halving the amount up to 1:16.
-I took 3 measurements for each timepoint. One measurement for the Cell Counter and the manual counting consists of three seperate images.</p>
+For that i took a cell suspension with ~1.35 * 10^7 cells and set up a serial dilution by always halving the amount up to 1:16.
+I took 3 measurements for each timepoint. One measurement for both, the Cell Counter and the manual counting consists of three seperate images.</p>
 <p>Here you can see the result of those measurements:</p>
-<div id="986bdbbd-1e80-49c8-92c5-4941f7b1184d" style="width: 700px; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div>        
+<div id="ab0446bc-ddf1-4f2a-84a4-af0ea1421529" style="width: 700px; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div>        
   <script>
     var data = [{"type":"scatter","x":["1:1","1:2","1:4","1:8","1:16"],"y":[13500000.0,7500000.0,3722222.0,1527778.0,1027778.0],"mode":"lines","marker":{},"error_y":{"array":[180021.0,245327.0,501541.0,171234.0,306816.0]},"name":"Cell Counter"},{"type":"scatter","x":["1:1","1:2","1:4","1:8","1:16"],"y":[14000000.0,6638889.0,3222222.0,1611111.0,944444.0],"mode":"lines","marker":{},"error_y":{"array":[784691.0,519675.0,306816.0,238953.0,398686.0]},"name":"Manual counting"},{"type":"scatter","x":["1:1","1:2","1:4","1:8","1:16"],"y":[13113333.0,7283333.0,3813000.0,1968333.0,1006067.0],"mode":"lines","marker":{},"error_y":{"array":[744058.0,59668.0,46755.0,18553.0,15179.0]},"name":"Coulter Counter"}];
     var layout = {"xaxis":{"title":"Dilution","tickmode":"auto","ticks":"inside","mirror":"all","showline":true,"showgrid":false,"zeroline":false,"titlefont":{"family":"Arial","size":20.0},"tickfont":{"family":"Arial","size":20.0}},"yaxis":{"title":"Cells/ml","tickmode":"auto","ticks":"inside","mirror":"all","showline":true,"showgrid":false,"zeroline":false,"titlefont":{"family":"Arial","size":20.0},"tickfont":{"family":"Arial","size":20.0}},"width":900.0,"height":900.0};
-    Plotly.newPlot('986bdbbd-1e80-49c8-92c5-4941f7b1184d', data, layout);
+    Plotly.newPlot('ab0446bc-ddf1-4f2a-84a4-af0ea1421529', data, layout);
   </script>
 </br>
 </br>
@@ -71,21 +72,20 @@ I took 3 measurements for each timepoint. One measurement for the Cell Counter a
 The Y-error bar represents the standard deviation of the 3 measurements taken at each dilution step.
 <p>As you can see in this little test, all three methods give comparable results regarding the amount of cells/ml. While the manual counting of cells is
 a tedious approach, the Cell Counter has it's merits in efficiency compared to the Coulter Counter. All it needs are pictures taken under a microscope, which
-is easily done, even more so if it is done for more than one culture at once since it is only swapping of objectives then. It is also really usefull for the
-cell counting in bioreactors. Since those have to be monitored constantly for possible infections under the microscope with picture documentation, one can use those
+is easily done, even more so if it is done for more than one culture at once since it is only swapping of objectives then. It is also usefull for the
+cell counting in bioreactors. Bioreactors have to be monitored constantly for possible infections under the microscope with picture documentation, so one can use those
 pictures as input for the Cell Counter at the same time.</p>
-<p>Experiment Data</p>
+<h2><a name="Experiment-Data" class="anchor" href="#Experiment-Data">Experiment Data</a></h2>
 <p>For those of you, who want to replicate the experiment, here are the parameters used in the functions and the picture data:</p>
 <p>Camera and microscope</p>
 <ul>
 <li>Pixel Size     : 6.45x6.45 microns</li>
 <li>Binning        : 2x2</li>
 <li>Camera Mount   : 2x</li>
-<li>
-<p>Magnification  : 20x
-</br>
-Cells</p>
-</li>
+<li>Magnification  : 20x</li>
+</ul>
+<p>Cells</p>
+<ul>
 <li>Diameter: 9.5 microns</li>
 </ul>
 <p><a href="https://1drv.ms/f/s!Al3ycUpvciEdkOEhELLpMhTADfLLvA">Here</a> are the pictures for the program to analyze.</p>
@@ -105,7 +105,7 @@ Cells</p>
 <span class="l">13: </span>
 <span class="l">14: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs42', 107)" onmouseover="showTip(event, 'fs42', 107)" class="id">dimension</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs43', 108)" onmouseover="showTip(event, 'fs43', 108)" class="m">Filter</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs44', 109)" onmouseover="showTip(event, 'fs44', 109)" class="id">groupQuadratCalculator</span> <span class="n">6.45</span> <span class="n">2.</span> <span class="n">20.</span> <span class="n">2.</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs42', 107)" onmouseover="showTip(event, 'fs42', 107)" class="id">dimension</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs43', 108)" onmouseover="showTip(event, 'fs43', 108)" class="m">Filter</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs44', 109)" onmouseover="showTip(event, 'fs44', 109)" class="id">squareCalculator</span> <span class="n">6.45</span> <span class="n">2.</span> <span class="n">20.</span> <span class="n">2.</span>
 
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs45', 110)" onmouseover="showTip(event, 'fs45', 110)" class="id">wvRadius</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs43', 111)" onmouseover="showTip(event, 'fs43', 111)" class="m">Filter</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs46', 112)" onmouseover="showTip(event, 'fs46', 112)" class="id">cellRadiusCalculator</span> <span class="n">9.5</span> <span class="n">6.45</span> <span class="n">2.</span> <span class="n">20.</span> <span class="n">2.</span>
 
@@ -168,7 +168,7 @@ Cells</p>
 <div class="tip" id="fs41">static member Chart.withSize : width:float * heigth:float -&gt; (GenericChart.GenericChart -&gt; GenericChart.GenericChart)</div>
 <div class="tip" id="fs42">val dimension : int</div>
 <div class="tip" id="fs43">module Filter<br /><br />from CounterFunctions</div>
-<div class="tip" id="fs44">val groupQuadratCalculator : cameraPixelSize:float -&gt; binning:float -&gt; magnification:float -&gt; cameraMount:float -&gt; int</div>
+<div class="tip" id="fs44">val squareCalculator : cameraPixelSize:float -&gt; binning:float -&gt; magnification:float -&gt; cameraMount:float -&gt; int</div>
 <div class="tip" id="fs45">val wvRadius : float</div>
 <div class="tip" id="fs46">val cellRadiusCalculator : cellDiameter:float -&gt; cameraPixelSize:float -&gt; binning:float -&gt; magnification:float -&gt; cameraMount:float -&gt; float</div>
 <div class="tip" id="fs47">val processFolders : folderPath:string -&gt; height:int -&gt; width:int -&gt; radius:float -&gt; multiplier:float -&gt; (int * GenericChart.GenericChart) [] []</div>
@@ -197,14 +197,14 @@ Cells</p>
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
               <li class="nav-header">CellCounter</li>
               <li><a href="/CellCounter/index.html">Home page</a></li>
-              <li><a href="/CellCounter/DilutionExperiment.html">Counting Experiment</a></li>
               <li class="divider"></li>
               <li><a href="https://github.com/Joott/CellCounter">Source Code on GitHub</a></li>
               <li><a href="/CellCounter/license.html">License</a></li>
               <li><a href="/CellCounter/release-notes.html">Release Notes</a></li>
 
               <li class="nav-header">Getting started</li>
-              <li><a href="/CellCounter/tutorial.html">Sample tutorial</a></li>
+              <li><a href="/CellCounter/FunctionExplanation.html">Function Explanation</a></li>
+              <li><a href="/CellCounter/DilutionExperiment.html">Counting Experiment</a></li>
 
               <li class="nav-header">Documentation</li>
               <li><a href="/CellCounter/reference/index.html">API Reference</a></li>

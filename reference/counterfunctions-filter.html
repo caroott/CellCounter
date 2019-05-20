@@ -100,33 +100,9 @@ are two opposing points on the desired circle as float tuples with the X value f
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
-            groupQuadratCalculator(...)
-          </code>
-          <div class="tip" id="3">
-            <strong>Signature:</strong> cameraPixelSize:float&lt;MeasureOne&gt; -&gt; binning:float&lt;MeasureOne&gt; -&gt; magnification:float&lt;MeasureOne&gt; -&gt; cameraMount:float&lt;MeasureOne&gt; -&gt; int<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L170-170" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>This function takes a float, a float, a float and a float. It returns an int.
-cameraPixelSize is the pixel size of the camera used in �m. For a pixel size of 5x5 for example, you put in a 5.
-binning represents the binning used for the image. For a binning of 2x2
-you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective,
-cameraMount the magnification of the camera mount used.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
             rectangleSelector(...)
           </code>
-          <div class="tip" id="4">
+          <div class="tip" id="3">
             <strong>Signature:</strong> image:float [,] -&gt; (int * int) -&gt; (int * int) -&gt; float&lt;MeasureOne&gt; [] []<br />
                                   </div>
         </td>
@@ -145,10 +121,10 @@ are the upper left and lower right points of the rectangle as int tuples with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
+          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
             rectangleSelectorCenter(...)
           </code>
-          <div class="tip" id="5">
+          <div class="tip" id="4">
             <strong>Signature:</strong> image:int [,] -&gt; height:int -&gt; width:int -&gt; int [,]<br />
                                   </div>
         </td>
@@ -160,6 +136,30 @@ are the upper left and lower right points of the rectangle as int tuples with th
           <p>This function takes an int 2DArray, an int and an int. It returns an int 2DArray.
 image is the image which should be cut into the desired dimensions, height and width are the dimensions of the new 2DArray (picture).
 The center of the picture stays the same.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
+            squareCalculator(...)
+          </code>
+          <div class="tip" id="5">
+            <strong>Signature:</strong> cameraPixelSize:float&lt;MeasureOne&gt; -&gt; binning:float&lt;MeasureOne&gt; -&gt; magnification:float&lt;MeasureOne&gt; -&gt; cameraMount:float&lt;MeasureOne&gt; -&gt; int<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L170-170" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>This function takes a float, a float, a float and a float. It returns an int.
+cameraPixelSize is the pixel size of the camera used in �m. For a pixel size of 5x5 for example, you put in a 5.
+binning represents the binning used for the image. For a binning of 2x2
+you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective,
+cameraMount the magnification of the camera mount used.</p>
 
 
         </td>
@@ -217,14 +217,14 @@ and the boolean indicates whether the maxima are positive (true) or negative (fa
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
               <li class="nav-header">CellCounter</li>
               <li><a href="/CellCounter/index.html">Home page</a></li>
-              <li><a href="/CellCounter/DilutionExperiment.html">Counting Experiment</a></li>
               <li class="divider"></li>
               <li><a href="https://github.com/Joott/CellCounter">Source Code on GitHub</a></li>
               <li><a href="/CellCounter/license.html">License</a></li>
               <li><a href="/CellCounter/release-notes.html">Release Notes</a></li>
 
               <li class="nav-header">Getting started</li>
-              <li><a href="/CellCounter/tutorial.html">Sample tutorial</a></li>
+              <li><a href="/CellCounter/FunctionExplanation.html">Function Explanation</a></li>
+              <li><a href="/CellCounter/DilutionExperiment.html">Counting Experiment</a></li>
 
               <li class="nav-header">Documentation</li>
               <li><a href="/CellCounter/reference/index.html">API Reference</a></li>
