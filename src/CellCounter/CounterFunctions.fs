@@ -313,7 +313,8 @@ module Filter =
             |> JaggedArray.map (fun x -> if x > topTenAverage * multiplier then 0. else -x)
 
 
-///Example functions of how to use the functions in the other modules. They can be modiefied according to the specific needs.
+///Example functions of how to use the functions in the other modules. They can be modiefied according to the specific needs of the user.
+
 module Pipeline =
 
     ///Applies the image processing steps to count images from an impoved Neubauer counting chamber.
