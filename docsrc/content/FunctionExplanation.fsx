@@ -14,7 +14,7 @@ Calculating Dimensions
 The functions in this library require two different dimensions in pixels. Since pixels are not "real" parameters, here are two functions to calculate
 the dimensions from parameters given by the equipment.
 
-The first parameter needed is the dimension of a square under the Neubauer counting chamber. The function to calculate that is:
+The first parameter needed is the dimension of a square under the counting chamber. The function to calculate that for an improved Neubauer counting chamber is:
 *)
 Filter.squareCalculator cameraPixelSize binning magnification cameraMount
 (**
@@ -34,14 +34,14 @@ Filter.cellRadiusCalculator cellDiameter cameraPixelSize binning magnification c
 Processing Images
 -----------------
 The function processImage is a function which combines all processing functions in the correct order for one single image and analyzes a square in the center of the picture with the size of
-a square from the counting chamber
+a square from the counting chamber. It also serves rather as an example of how to use the functions, since it can be modified in several ways, which are detailed below.
 *)
 Pipeline.processImage filePath height width radius thresholdMultiplier
 (**
 filePath is the path of the image. Height and width can be filled with the same result from the Filter.squareCalculator. Radius gets the result from Filter.cellRadiusCalculator.
 thresholdMultiplier is a multiplier for the cutoff after the wavelet transformation. It has to be higher the closer in intensity the background to the cells is. The threshold function in the
 pipeline contains a boolean for determining whether the cells have a positive or negative value. In all cases so far the intensities were negative. if for some reason they are positive,
-the boolean has to be changed to "true".
+the boolean has to be changed to "true". The chart which is returned in the resulting tuple serves visualization purposes. this functionality can be removed without consequences.
 *)
 Pipeline.processImages folderPath height width radius thresholdMultiplier
 (**
@@ -65,5 +65,9 @@ of the picture, following function can be used:
 Filter.rectangleSelector upperLeftXY lowerRightBXY
 (**
 It has a similar input format as the Filter.circleSelector, except it takes the upper left and lower right points of the rectangle.
-*)
 
+Misc
+----
+The functions in the modules Maxima and Image are adapted from the [BioFSharp](https://github.com/CSBiology/BioFSharp) library, an open source bioinformatics toolbox written in F#.
+The functions were modified to fit the needs of the Cell Counter.
+*)
