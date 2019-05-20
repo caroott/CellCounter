@@ -42,6 +42,8 @@
   <span>Namespace: CounterFunctions</span><br />
   </p>
 <div class="xmldoc">
+<p>Functions to filter all unwanted parts of the picture.</p>
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -63,7 +65,7 @@
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L183-183" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L186-186" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -85,11 +87,11 @@ cameraMount the magnification of the camera mount used.</p>
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L193-193" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L196-196" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes a float 2DArray, a float tuple and a float tuple. It returns a jagged array.
+          <p>Selects a circular part of the image based on the given coordinates.
 image is the image which should be set to zero around a selected circle , pointAXY and pointBXY
 are two opposing points on the desired circle as float tuples with the X value first and the Y value second.</p>
 
@@ -107,11 +109,11 @@ are two opposing points on the desired circle as float tuples with the X value f
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L215-215" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L218-218" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes a float 2DArray, an int tuple and an int tuple. It returns a jagged array.
+          <p>Selects a rectangular part of the image based on the given coordinates.
 image is the image which should be set to zero around a selected rectangle , lowerLeftXY and lowerRightXY
 are the upper left and lower right points of the rectangle as int tuples with the X value first and the Y value second.</p>
 
@@ -129,11 +131,11 @@ are the upper left and lower right points of the rectangle as int tuples with th
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L237-237" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L240-240" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes an int 2DArray, an int and an int. It returns an int 2DArray.
+          <p>Selects a rectangular part of the image based on the center with the given dimensions.
 image is the image which should be cut into the desired dimensions, height and width are the dimensions of the new 2DArray (picture).
 The center of the picture stays the same.</p>
 
@@ -151,11 +153,11 @@ The center of the picture stays the same.</p>
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L170-170" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L173-173" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes a float, a float, a float and a float. It returns an int.
+          <p>Calculates the dimension in pixels for a square in an improved Neubauer counting chamber
 cameraPixelSize is the pixel size of the camera used in �m. For a pixel size of 5x5 for example, you put in a 5.
 binning represents the binning used for the image. For a binning of 2x2
 you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective,
@@ -175,11 +177,11 @@ cameraMount the magnification of the camera mount used.</p>
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L285-285" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L288-288" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes a float 2DArray, a float and a boolean. It returns a jagged array.
+          <p>Sets every point below a chosen multiple of the highest points to 0.
 image is the image which should be thresholded, multiplier can be used to increase the cut-off value
 and the boolean indicates whether the maxima are positive (true) or negative (false)</p>
 
@@ -197,11 +199,11 @@ and the boolean indicates whether the maxima are positive (true) or negative (fa
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L261-261" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L264-264" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes a float 2DArray, a float and a boolean. It returns a jagged array.
+          <p>Sets every point below a chosen percentile to 0.
 image is the image which should be thresholded, percentile is the percentage of values which should be thresholded
 and the boolean indicates whether the maxima are positive (true) or negative (false).</p>
 

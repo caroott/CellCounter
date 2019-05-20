@@ -42,6 +42,8 @@
   <span>Namespace: CounterFunctions</span><br />
   </p>
 <div class="xmldoc">
+<p>Contains wavelet transformation and local maxima finding.</p>
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -63,11 +65,11 @@
                           <strong>Type parameters:</strong> ^a                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L74-74" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L75-75" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes a MarrWavelet and a 2DArray. It returns a float 2DArray.
+          <p>Calculates the wavelet transformation for every pixel with the given wavelet.
 marr is a MarrWavelet, which can be created by the marrWaveletCreator. image is the image which should be transformed with the marr wavelet.
 The output is the transformed image.</p>
 
@@ -85,11 +87,11 @@ The output is the transformed image.</p>
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L113-113" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L114-114" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes an int and a float 2DArray. It returns a float tuple list.
+          <p>Calculates the local maxima in the given 2DArray.
 image is the image in which the local maxima should be found. dist is the radius for points around the checked point which should also belong to the
 local maximum. The returned tuple list contains the coordinates of the found maxima.</p>
 

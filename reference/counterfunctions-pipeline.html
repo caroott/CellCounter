@@ -42,6 +42,8 @@
   <span>Namespace: CounterFunctions</span><br />
   </p>
 <div class="xmldoc">
+<p>Example functions of how to use the functions in the other modules. They can be modiefied according to the specific needs.</p>
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -63,14 +65,15 @@
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L319-319" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L325-325" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes a string, an int, an int , a float and a float. It returns a tuple of an int and a GenericChart.
+          <p>Applies the image processing steps to count images from an impoved Neubauer counting chamber.
 filePath is the path to the image to be analyzed. height and width are the dimensions of the rectangle
 to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
-multiplier increases or decreases the cut-off value for the thresholding function.</p>
+multiplier increases or decreases the cut-off value for the thresholding function. In addition to the counting result
+it also returns a chart tupled with it.</p>
 
 
         </td>
@@ -86,11 +89,11 @@ multiplier increases or decreases the cut-off value for the thresholding functio
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L368-368" class="github-link">
+                      <a href="https://github.com/Joott/CellCounter/tree/master/src/CellCounter/CounterFunctions.fs#L374-374" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>This function takes an array of strings, an int, an int , a float and a float. It returns an array of tuples of an int and a GenericChart.
+          <p>Applies the processing function for a single image to a folder of images.
 folderPath is the path to the images to be analyzed. height and width are the dimensions of the rectangle
 to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
 multiplier increases or decreases the cut-off value for the thresholding function.</p>
