@@ -134,7 +134,7 @@ let processAll = processFolders @"...\Dilution\CoulterCounter"
 (**
 The data for the manual counting can be found [here](https://1drv.ms/f/s!Al3ycUpvciEdkOEn8fGtLj7uMFQp4A), and the Coulter Counter data is [here](https://1drv.ms/f/s!Al3ycUpvciEdkOEgEXHeieR94E2GGw).
 
-A more in depth explanation how to adapt the functions for your use can be found [here](https://joott.github.io/CellCounter/FunctionExplanation.html)
+A more in depth explanation how to adapt the functions for your use can be found [here](FunctionExplanation.html)
 *)
 
 

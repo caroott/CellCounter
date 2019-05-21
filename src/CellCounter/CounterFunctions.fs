@@ -165,26 +165,26 @@ module Maxima =
 module Filter =
 
     ///Calculates the dimension in pixels for a square in an improved Neubauer counting chamber
-    ///cameraPixelSize is the pixel size of the camera used in µm. For a pixel size of 5x5 for example, you put in a 5.
+    ///cameraPixelSize is the pixel size of the camera used in microns. For a pixel size of 5x5 for example, you put in a 5.
     ///binning represents the binning used for the image. For a binning of 2x2
     ///you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective, 
     ///cameraMount the magnification of the camera mount used.
 
     let squareCalculator cameraPixelSize binning magnification cameraMount =
-        //calculates the size of 1 pixel in µm
+        //calculates the size of 1 pixel in microns
         let pixelSize = (cameraPixelSize * binning) / (magnification * cameraMount)
         //gives the width/lenght of a group square in an improved neubauer counting chamber
         int (200. / pixelSize)
 
     ///Calculates the radius for the wavelet based on the cell diameter.
-    ///cellDiamaeter is the diameter of the cells in µm.
-    //cameraPixelSize is the pixel size of the camera used in µm. For a pixel size of 5x5 for example, you put in a 5.
+    ///cellDiamaeter is the diameter of the cells in microns.
+    //cameraPixelSize is the pixel size of the camera used in microns. For a pixel size of 5x5 for example, you put in a 5.
     ///binning represents the binning used for the image. For a binning of 2x2
     ///you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective, 
     ///cameraMount the magnification of the camera mount used.
 
     let cellRadiusCalculator (cellDiameter: float) (cameraPixelSize: float) (binning: float) (magnification: float) (cameraMount: float) =
-        //calculates the size of 1 pixel in µm
+        //calculates the size of 1 pixel in microns
         let pixelSize = (cameraPixelSize * binning) / (magnification * cameraMount)
         //gives the radius used for the wavelet
         (cellDiameter / pixelSize) / 2.
