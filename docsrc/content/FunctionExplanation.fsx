@@ -40,7 +40,7 @@ Pipeline.processImage filePath height width radius thresholdMultiplier
 (**
 filePath is the path of the image. Height and width can be filled with the same result from the Filter.squareCalculator. Radius gets the result from Filter.cellRadiusCalculator.
 thresholdMultiplier is a multiplier for the cutoff after the wavelet transformation. It has to be higher the closer in intensity the background to the cells is. The threshold function in the
-pipeline contains a boolean for determining whether the cells have a positive or negative value. In all cases so far the intensities were negative. if for some reason they are positive,
+pipeline contains a boolean for determining whether the cells have a positive or negative value. In all cases so far the intensities were negative. If for some reason they are positive,
 the boolean has to be changed to "true". The chart which is returned in the resulting tuple serves visualization purposes. this functionality can be removed without consequences.
 *)
 Pipeline.processImages folderPath height width radius thresholdMultiplier
@@ -48,7 +48,7 @@ Pipeline.processImages folderPath height width radius thresholdMultiplier
 This function is a convenience function which applies the previous function to a whole folder with images. It takes a folderpath instead of the filepath and processes all
 images in that folder.
 
-Alternative uses
+Possible Variants
 ----------------
 
 The threshold function currently used in the Pipeline.processImage is based on the maximum intensities in the pictures. An alternative threshold function exists which is based on a percentile cutoff. It can be used

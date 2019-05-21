@@ -57,7 +57,7 @@ Counting results
 To determine the effectiveness of the Cell Counter, I compared it to two different other counting methods. One of them was manual counting using the 
 [Neubauer counting chamber](https://en.wikipedia.org/wiki/Hemocytometer), the other was counting the cells with a [Coulter Counter](https://en.wikipedia.org/wiki/Coulter_counter).
 For that i took a cell suspension with ~1.35 * 10^7 cells and set up a serial dilution by always halving the amount up to 1:16.
-I took 3 measurements for each timepoint. One measurement for both, the Cell Counter and the manual counting consists of three seperate images.
+I took 3 measurements for each timepoint. One measurement for both, the Cell Counter and the manual counting, consists of three seperate images.
 
 Here you can see the result of those measurements:
 *)
