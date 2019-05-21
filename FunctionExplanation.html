@@ -40,7 +40,7 @@ the dimensions from parameters given by the equipment.</p>
 <p>The first parameter needed is the dimension of a square under the counting chamber. The function to calculate that for an improved Neubauer counting chamber is:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="id">Filter</span><span class="pn">.</span><span class="id">squareCalculator</span> <span class="id">cameraPixelSize</span> <span class="id">binning</span> <span class="id">magnification</span> <span class="id">cameraMount</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="m">Filter</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="id">squareCalculator</span> <span class="id">cameraPixelSize</span> <span class="id">binning</span> <span class="id">magnification</span> <span class="id">cameraMount</span>
 </code></pre></td>
 </tr>
 </table>
@@ -54,7 +54,7 @@ the squares of the counting chamber. Therefore no lines are needed and only infl
 nearly the same input as the previous one, except that its first parameter is the diameter of the cells in microns.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="id">Filter</span><span class="pn">.</span><span class="id">cellRadiusCalculator</span> <span class="id">cellDiameter</span> <span class="id">cameraPixelSize</span> <span class="id">binning</span> <span class="id">magnification</span> <span class="id">cameraMount</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs4', 6)" onmouseover="showTip(event, 'fs4', 6)" class="m">Filter</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs6', 7)" onmouseover="showTip(event, 'fs6', 7)" class="id">cellRadiusCalculator</span> <span class="id">cellDiameter</span> <span class="id">cameraPixelSize</span> <span class="id">binning</span> <span class="id">magnification</span> <span class="id">cameraMount</span>
 </code></pre></td>
 </tr>
 </table>
@@ -63,7 +63,7 @@ nearly the same input as the previous one, except that its first parameter is th
 a square from the counting chamber. It also serves rather as an example of how to use the functions, since it can be modified in several ways, which are detailed below.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="id">Pipeline</span><span class="pn">.</span><span class="id">processImage</span> <span class="id">filePath</span> <span class="id">height</span> <span class="id">width</span> <span class="id">radius</span> <span class="id">thresholdMultiplier</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="m">Pipeline</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="id">processImage</span> <span class="id">filePath</span> <span class="id">height</span> <span class="id">width</span> <span class="id">radius</span> <span class="id">thresholdMultiplier</span>
 </code></pre></td>
 </tr>
 </table>
@@ -74,7 +74,7 @@ the boolean has to be changed to "true". The chart which is returned in the resu
 you have to open FSharp.Plotly and use the command Chart.Show.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="id">Pipeline</span><span class="pn">.</span><span class="id">processImages</span> <span class="id">folderPath</span> <span class="id">height</span> <span class="id">width</span> <span class="id">radius</span> <span class="id">thresholdMultiplier</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="m">Pipeline</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 11)" onmouseover="showTip(event, 'fs9', 11)" class="id">processImages</span> <span class="id">folderPath</span> <span class="id">height</span> <span class="id">width</span> <span class="id">radius</span> <span class="id">thresholdMultiplier</span>
 </code></pre></td>
 </tr>
 </table>
@@ -86,7 +86,7 @@ in place of the other function, although its performance is worse with changing 
 <p>To count cells in petri dishes, the Filter.rectangleSelectorCenter function in the pipeline has to be replaced with:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="id">Filter</span><span class="pn">.</span><span class="id">circleSelector</span> <span class="id">pointAXY</span> <span class="id">pointBXY</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs4', 12)" onmouseover="showTip(event, 'fs4', 12)" class="m">Filter</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs10', 13)" onmouseover="showTip(event, 'fs10', 13)" class="id">circleSelector</span> <span class="id">pointAXY</span> <span class="id">pointBXY</span>
 </code></pre></td>
 </tr>
 </table>
@@ -95,7 +95,7 @@ Those coordinates can be read from the picture directly. This input would then r
 of the picture, following function can be used:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="id">Filter</span><span class="pn">.</span><span class="id">rectangleSelector</span> <span class="id">upperLeftXY</span> <span class="id">lowerRightBXY</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs4', 14)" onmouseover="showTip(event, 'fs4', 14)" class="m">Filter</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs11', 15)" onmouseover="showTip(event, 'fs11', 15)" class="id">rectangleSelector</span> <span class="id">upperLeftXY</span> <span class="id">lowerRightBXY</span>
 </code></pre></td>
 </tr>
 </table>
@@ -104,7 +104,17 @@ of the picture, following function can be used:</p>
 <p>The functions in the modules Maxima and Image are adapted from the <a href="https://github.com/CSBiology/BioFSharp">BioFSharp</a> library, an open source bioinformatics toolbox written in F#.
 The functions were modified to fit the needs of the Cell Counter.</p>
 
-<div class="tip" id="fs1">namespace Microsoft.FSharp</div>
+<div class="tip" id="fs1">Multiple items<br />namespace FSharp<br /><br />--------------------<br />namespace Microsoft.FSharp</div>
+<div class="tip" id="fs2">namespace FSharp.Plotly</div>
+<div class="tip" id="fs3">namespace CounterFunctions</div>
+<div class="tip" id="fs4">module Filter<br /><br />from CounterFunctions</div>
+<div class="tip" id="fs5">val squareCalculator : cameraPixelSize:float -&gt; binning:float -&gt; magnification:float -&gt; cameraMount:float -&gt; int</div>
+<div class="tip" id="fs6">val cellRadiusCalculator : cellDiameter:float -&gt; cameraPixelSize:float -&gt; binning:float -&gt; magnification:float -&gt; cameraMount:float -&gt; float</div>
+<div class="tip" id="fs7">module Pipeline<br /><br />from CounterFunctions</div>
+<div class="tip" id="fs8">val processImage : filePath:string -&gt; height:int -&gt; width:int -&gt; radius:float -&gt; multiplier:float -&gt; int * GenericChart.GenericChart</div>
+<div class="tip" id="fs9">val processImages : folderPath:string -&gt; height:int -&gt; width:int -&gt; radius:float -&gt; multiplier:float -&gt; (int * GenericChart.GenericChart) []</div>
+<div class="tip" id="fs10">val circleSelector : image:float [,] -&gt; float * float -&gt; float * float -&gt; float [] []</div>
+<div class="tip" id="fs11">val rectangleSelector : image:float [,] -&gt; int * int -&gt; int * int -&gt; float [] []</div>
 
         </div>
         <div class="span3">
