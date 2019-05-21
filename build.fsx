@@ -252,6 +252,7 @@ Target.create "RunTests" (fun _ ->
 Target.create "NuGet" (fun _ ->
     Paket.pack(fun p ->
         { p with
+            ToolPath=".paket/paket.exe"
             OutputPath = "bin"
             Version = release.NugetVersion
             ReleaseNotes = String.toLines release.Notes})
@@ -313,10 +314,14 @@ Target.create "ReferenceDocs" (fun _ ->
                         DirectoryInfo.getSubDirectories d |> Array.filter(fun x -> x.FullName.ToLower().Contains("net45"))
                     let net47Bin =
                         DirectoryInfo.getSubDirectories d |> Array.filter(fun x -> x.FullName.ToLower().Contains("net47"))
+                    let netStandardBin =
+                        DirectoryInfo.getSubDirectories d |> Array.filter(fun x -> x.FullName.ToLower().Contains("netstandard"))
                     if net45Bin.Length > 0 then
                         d.Name, net45Bin.[0]
-                    else
+                    elif net47Bin.Length > 0 then
                         d.Name, net47Bin.[0]
+                    else
+                        d.Name, netStandardBin.[0]
 
                 dInfo.GetFiles()
                 |> Array.filter (fun x ->
@@ -494,7 +499,7 @@ Target.create "All" ignore
   ==> "Release"
 
 "BuildPackage"
-  //==> "PublishNuget"
+  ==> "PublishNuget"
   ==> "Release"
 
 "Clean"
@@ -502,7 +507,7 @@ Target.create "All" ignore
   ==> "Build"
   ==> "CopyBinaries"
   ==> "RunTests"
-  //==> "NuGet"
+  ==> "NuGet"
   ==> "GitReleaseNuget"
 
 "All"

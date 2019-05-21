@@ -3,44 +3,21 @@ namespace CounterFunctions
 
 open FSharpAux
 open FSharp.Stats
-open FSharp.Collections
-open FSharp.Plotly
+open BioFSharp.ImgP
 open System
 open System.IO
+open FSharp.Collections
+open FSharp.Plotly
 open System.Windows.Media
 open System.Windows.Media.Imaging
 
 
-module MarrWavelet =
-    
-    
-    type MarrWavelet =  {
-        Scale           : float    
-        Zero            : float    
-        Minimum         : float    
-        Diameter        : float    
-        Values          : float [,]
-        PadAreaRadius   : int      
-        LMdistance      : int      
-        zFilterdist     : float    
-                        }
-
-    let marrWaveletCreator (radius : float) = 
-        let functionMarr x (y:float) s = (1./(Math.PI*s**2.))*(1.-(x**2.+y**2.)/(2.*s**2.))*(Math.E**(-((x**2.+y**2.)/(2.*s**2.))))
-        let functionValuesMarr scale list= Array.map (fun y -> (Array.map (fun x -> functionMarr x y scale) list)) list
-
-        {
-        Scale           = 0.7071 * (radius )
-        Zero            = radius   
-        Minimum         = radius*2.
-        Diameter        = radius*2.
-        Values          = Array2D.ofJaggedArray (functionValuesMarr (0.7071 * (radius)) [|-(ceil (3. * radius + 2.))..(ceil(3. * radius + 2.))|])
-        PadAreaRadius   = ceil (3. * radius + 2.) |> int 
-        LMdistance      = (1.2619 * (radius) + 1.3095) |> round 0 |> int 
-        zFilterdist     = 3.
-}
-
+///Functions to load and padd the image.
 module Image =
+
+    //The functions in this module are taken from BioFSharp.ImgP and modified for use in this project
+
+    ///Returns a 2DArray representing the pixels from the image at the filepath.
 
     let loadTiff filePath=
         let stream = File.OpenRead(filePath)
@@ -65,6 +42,8 @@ module Image =
         )
         |> Seq.head
 
+    ///Padds a 2DArray in both dimensions with random values for the wavelet transformation.
+
     let paddTiff (data: 'a[,])=
         let padArray2DWithRandom (rnd:System.Random) (offset:int) (arr:'a[,]) =
             let rowCount = Array2D.length1 arr 
@@ -84,22 +63,29 @@ module Image =
             |> padArray2DWithRandom rnd 100
         paddedRawData
 
+///Contains wavelet transformation and local maxima finding.
 module Maxima =
+    
+    //The functions in this module are taken from BioFSharp.ImgP and modified for use in this project
 
-    ///This function takes a MarrWavelet and a 2DArray. It returns a float 2DArray.
+    ///Calculates the wavelet transformation for every pixel with the given wavelet.
     ///marr is a MarrWavelet, which can be created by the marrWaveletCreator. image is the image which should be transformed with the marr wavelet.
     ///The output is the transformed image.
 
-    let inline C3DWT (marr: MarrWavelet.MarrWavelet) (image:'a[,]) =
+    let inline C3DWT (marr: Marr.MarrWavelet) (image:'a[,]) =
         //the length of both sides from the picture substracting the padding area
         let resolutionPixelfst = (Array2D.length1 image) - (100 * 2)
         let resolutionPixelsnd = (Array2D.length2 image) - (100 * 2)
+        //radius of the marr wavelet
         let offset = marr.PadAreaRadius
         let paddingoffset = 100
+        //creates an empty 2DArray which gets filled with the transformed values
         let (CWTArray2D0: float[,]) = Array2D.zeroCreate (Array2D.length2 image) (Array2D.length1 image)
+        //two for loops to apply the wavelet transformation to every point that wasn't added in the padding process
         for x = paddingoffset to (paddingoffset + (resolutionPixelsnd-1)) do
             for y = paddingoffset to (paddingoffset + (resolutionPixelfst-1)) do
                 CWTArray2D0.[x,y] <-
+                    //applies the wavelet to the point taking all surrounding points (limited by the offset) into account
                     let rec loop acc' a b =
                         if a <= 2 * offset then
                             if b <= 2 * offset then
@@ -109,8 +95,11 @@ module Maxima =
                                 loop acc' (a + 1) 0
                         else acc'
                     loop 0. 0 0
+        //removes the previously added padding area
         let deletePaddingArea =
+            //creates a 2DArray with the dimensions of the previous unpadded 2DArray
             let arrayWithoutPaddingoffset = Array2D.zeroCreate ((Array2D.length1 CWTArray2D0)-(2*paddingoffset)) ((Array2D.length2 CWTArray2D0)-(2*paddingoffset))
+            //copies all points that belonged to the unpadded 2DArray from the padded array to the newly created array
             for i=paddingoffset to (Array2D.length1 CWTArray2D0)-(paddingoffset+1) do
                 for j=paddingoffset to (Array2D.length2 CWTArray2D0)-(paddingoffset+1) do
                     arrayWithoutPaddingoffset.[(i-paddingoffset),(j-paddingoffset)] <- CWTArray2D0.[i,j]
@@ -118,7 +107,7 @@ module Maxima =
         deletePaddingArea
 
 
-    ///This function takes an int and a float 2DArray. It returns a float tuple list.
+    ///Calculates the local maxima in the given 2DArray.
     ///image is the image in which the local maxima should be found. dist is the radius for points around the checked point which should also belong to the
     ///local maximum. The returned tuple list contains the coordinates of the found maxima.
 
@@ -171,9 +160,36 @@ module Maxima =
                 else arrayOfMaxima.[i,j] <- 0.
         allmaximaArray arrayOfMaxima
 
+
+///Functions to filter all unwanted parts of the picture.
 module Filter =
 
-    ///This function takes a float 2DArray, a float tuple and a float tuple. It returns a jagged array.
+    ///Calculates the dimension in pixels for a square in an improved Neubauer counting chamber
+    ///cameraPixelSize is the pixel size of the camera used in microns. For a pixel size of 5x5 for example, you put in a 5.
+    ///binning represents the binning used for the image. For a binning of 2x2
+    ///you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective, 
+    ///cameraMount the magnification of the camera mount used.
+
+    let squareCalculator cameraPixelSize binning magnification cameraMount =
+        //calculates the size of 1 pixel in microns
+        let pixelSize = (cameraPixelSize * binning) / (magnification * cameraMount)
+        //gives the width/lenght of a group square in an improved neubauer counting chamber
+        int (200. / pixelSize)
+
+    ///Calculates the radius for the wavelet based on the cell diameter.
+    ///cellDiamaeter is the diameter of the cells in microns.
+    //cameraPixelSize is the pixel size of the camera used in microns. For a pixel size of 5x5 for example, you put in a 5.
+    ///binning represents the binning used for the image. For a binning of 2x2
+    ///you put in a 2, for a binning of 4x4 a 4 and so on. Magnification is the magnification of the objective, 
+    ///cameraMount the magnification of the camera mount used.
+
+    let cellRadiusCalculator (cellDiameter: float) (cameraPixelSize: float) (binning: float) (magnification: float) (cameraMount: float) =
+        //calculates the size of 1 pixel in microns
+        let pixelSize = (cameraPixelSize * binning) / (magnification * cameraMount)
+        //gives the radius used for the wavelet
+        (cellDiameter / pixelSize) / 2.
+
+    ///Selects a circular part of the image based on the given coordinates.
     ///image is the image which should be set to zero around a selected circle , pointAXY and pointBXY
     ///are two opposing points on the desired circle as float tuples with the X value first and the Y value second.
 
@@ -195,7 +211,7 @@ module Filter =
                                    else value))
         cutPicture
 
-    ///This function takes a float 2DArray, an int tuple and an int tuple. It returns a jagged array.
+    ///Selects a rectangular part of the image based on the given coordinates.
     ///image is the image which should be set to zero around a selected rectangle , lowerLeftXY and lowerRightXY 
     ///are the upper left and lower right points of the rectangle as int tuples with the X value first and the Y value second.
 
@@ -217,7 +233,7 @@ module Filter =
                                     else    value))
         selectPicture
  
-    ///This function takes an int 2DArray, an int and an int. It returns an int 2DArray.
+    ///Selects a rectangular part of the image based on the center with the given dimensions.
     ///image is the image which should be cut into the desired dimensions, height and width are the dimensions of the new 2DArray (picture).
     ///The center of the picture stays the same.
 
@@ -241,7 +257,7 @@ module Filter =
                               |> Array.filter (fun x -> not (Array.isEmpty x))
         JaggedArray.toArray2D selectPicture
 
-    ///This function takes a float 2DArray, a float and a boolean. It returns a jagged array.
+    ///Sets every point below a chosen percentile to 0.
     ///image is the image which should be thresholded, percentile is the percentage of values which should be thresholded
     ///and the boolean indicates whether the maxima are positive (true) or negative (false).
 
@@ -249,19 +265,23 @@ module Filter =
 
         let jaggedImage     = image |> Array2D.toJaggedArray
 
-        if maximaPositive then 
+        if maximaPositive then
+            //sorts the values in the array in an ascending order
             let percentile  = jaggedImage |> Array.concat |> Array.sort
+            //cutoffValue takes the value which is higher than x % of all values
             let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
             jaggedImage
             |> JaggedArray.map (fun x -> if x < cutOffValue then 0. else x)
         else
+            //sorts the values in the array in an descending order
             let percentile  = jaggedImage |> Array.concat |> Array.sortDescending
+            //cutoffValue takes the value which is lower than x % of all values
             let cutOffValue = percentile.[int (((float percentile.Length) - 1.) * percentileValue)]
             jaggedImage
             |> JaggedArray.map (fun x -> if x > cutOffValue then 0. else -x)
 
 
-    ///This function takes a float 2DArray, a float and a boolean. It returns a jagged array.
+    ///Sets every point below a chosen multiple of the highest points to 0.
     ///image is the image which should be thresholded, multiplier can be used to increase the cut-off value
     ///and the boolean indicates whether the maxima are positive (true) or negative (false)
 
@@ -270,62 +290,92 @@ module Filter =
         let jaggedImage         = image |> Array2D.toJaggedArray
 
         if maximaPositive then
+            //takes the maximum value of every pixel row (array) and sorts them descending
             let maxima          = jaggedImage
                                   |> Array.map Array.max
-                                  |> Array.sort
+                                  |> Array.sortDescending
+            //takes the highest 10% of the values and averages them
             let topTenAverage   = Array.take (maxima.Length / 10) maxima
                                   |> Array.average
+            //sets every value that is lower than the cut off * multiplier to 0.
             jaggedImage
             |> JaggedArray.map (fun x -> if x < topTenAverage * multiplier then 0. else x)
-        else 
+        else
+            //takes the minimum value of every pixel row (array) and sorts them ascending
             let minima          = jaggedImage
                                   |> Array.map Array.min
-                                  |> Array.sortDescending
+                                  |> Array.sort
+            //takes the lowest 10% of the values and averages them
             let topTenAverage   = Array.take (minima.Length / 10) minima
                                   |> Array.average
+            //sets every value that is higher than the cut off * multiplier to 0. and multplies it with -1 otherwise
             jaggedImage
             |> JaggedArray.map (fun x -> if x > topTenAverage * multiplier then 0. else -x)
 
+
+///Example functions of how to use the functions in the other modules. They can be modiefied according to the specific needs of the user.
+
 module Pipeline =
 
-    let processAllImages folderPath height width radius multiplier=
-        let imagePaths        = Directory.GetFiles folderPath
-        let images            = imagePaths
-                                |> Array.map Image.loadTiff
-        let selectedImages    = images
-                                |> Array.map (fun x -> Filter.rectangleSelectorCenter x height width)
-        let paddedImages      = selectedImages
-                                |> Array.map (fun x -> Image.paddTiff (Array2D.map float x))
-        let transformedImages = paddedImages 
-                                |> Array.mapi (fun i x -> printfn "Apply wavelet to image %i of %i" (i + 1) paddedImages.Length
-                                                          Maxima.C3DWT (MarrWavelet.marrWaveletCreator radius) x
-                                              )
-        let thresholdedImages = transformedImages
-                                |> Array.map (fun x -> Filter.thresholdMaxima x multiplier false)
-        let localMaxima       = thresholdedImages
-                                |> Array.map (fun x -> Maxima.findLocalMaxima 4 (x 
-                                                                                 |> JaggedArray.transpose
-                                                                                 |> JaggedArray.toArray2D
-                                                                                )
-                                             )
-        let charts            =
-            let jaggedTransfImg   = transformedImages
-                                    |> Array.map Array2D.toJaggedArray
-            let jaggedSelectedImg = selectedImages
-                                    |> Array.map Array2D.toJaggedArray
-                                    |> Array.map Array.transpose
-            Array.mapi (fun i x -> 
-                            [Chart.Combine [Chart.Point localMaxima.[i]
-                                            |> Chart.withMarkerStyle (5, "black");
-                                            Chart.Heatmap x
-                                           ]; 
-                             Chart.Heatmap jaggedTransfImg.[i];
-                             Chart.Heatmap jaggedSelectedImg.[i]
-                            ] 
-                            |> Chart.Stack 3
-                            |> Chart.withSize (1800., 600.)
-                            |> Chart.Show
-                ) thresholdedImages
-        let cellCount = localMaxima
-                        |> Array.map (fun x -> List.length x)
-        cellCount
+    ///Applies the image processing steps to count images from an impoved Neubauer counting chamber.
+    ///filePath is the path to the image to be analyzed. height and width are the dimensions of the rectangle
+    ///to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
+    ///multiplier increases or decreases the cut-off value for the thresholding function. In addition to the counting result
+    ///it also returns a chart tupled with it.
+
+    let processImage filePath height width radius multiplier=
+        //loads the pixel values in a 2DArray
+        let image             = Image.loadTiff filePath
+        //reduces the picture to a rectangle with the chosen dimensions
+        let selectedImage     = Filter.rectangleSelectorCenter image height width
+        //padds the image for the wavelet transformation and casts the int values in the 2DArray to floats
+        let paddedImage       = selectedImage |> fun x -> Image.paddTiff (Array2D.map float x)
+        //applies the wavelet transformation with a marr wavelet with chosen radius on every single point
+        let transformedImage  = Maxima.C3DWT (Marr.marrWaveletCreator radius) paddedImage
+        //sets values below or above the cut-off value to 0.
+        let thresholdedImage  = Filter.thresholdMaxima transformedImage multiplier false
+        //analyzes the thresholded picture for local maxima. A radius of 4 points around the local maximum is taken for the calculation.
+        let localMaxima       = Maxima.findLocalMaxima 4 (thresholdedImage 
+                                                          |> JaggedArray.transpose
+                                                          |> JaggedArray.toArray2D
+                                                         )
+        //visual representation of the analyzing process. This part can be safely removed if not needed
+        let chart             =
+            //the images are brought into the correct format and orientation for the visual representation
+            let jaggedSelectedImg = selectedImage
+                                    |> Array2D.toJaggedArray
+                                    |> Array.transpose
+            let jaggedTransfImg   = transformedImage
+                                    |> Array2D.toJaggedArray
+            //creates heatmaps of the original selected rectangle, the transformed version and the thresholded version
+            //a point chart of the found local maxima is laid over the thresholded version to indicate found cells
+            [
+            Chart.Heatmap (thresholdedImage, Showscale = false)
+            |> Chart.withX_AxisStyle ("Thresholded data")
+            Chart.Heatmap (jaggedTransfImg, Showscale = false)
+            |> Chart.withX_AxisStyle ("Transformed data");
+            Chart.Combine [Chart.Point localMaxima
+                            |> Chart.withMarkerStyle (5, "black");
+                            Chart.Heatmap (jaggedSelectedImg, Showscale = false)
+                            |> Chart.withX_AxisStyle ("Original data with recognized cells overlaid")
+                          ]
+            ]
+            |> Chart.Stack 3
+            |> Chart.withSize (1800., 600.)
+        //number of cells found in the image
+        let cellCount = List.length localMaxima
+
+        cellCount, chart
+
+    ///Applies the processing function for a single image to a folder of images.
+    ///folderPath is the path to the images to be analyzed. height and width are the dimensions of the rectangle
+    ///to be analyzed in pixels. radius is the radius of the cells that should be counted in pixels.
+    ///multiplier increases or decreases the cut-off value for the thresholding function.
+
+    let processImages folderPath height width radius multiplier =
+        //gets a string array containing all the filenames of files in the folder
+        let imagePaths  = Directory.GetFiles folderPath
+        //applies the processImage function on all strings in the array
+        let results     =
+            Array.map (fun path -> processImage path height width radius multiplier) imagePaths
+        results
