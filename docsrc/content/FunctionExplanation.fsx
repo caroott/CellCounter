@@ -1,9 +1,9 @@
 (*** hide ***)
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
-#r @"C:\Users\Student\source\repos\CellCounter\lib\Formatting\FSharp.Plotly.dll"
-#r @"C:\Users\Student\source\repos\CellCounter\src\CellCounter\bin\Release\netstandard2.0\CellCounter.dll"
-#r @"C:\Users\Student\source\repos\CellCounter\packages\NETStandard.Library\build\netstandard2.0\ref\netstandard.dll"
+#r @"C:\Users\Ott\source\repos\CellCounter\lib\Formatting\FSharp.Plotly.dll"
+#r @"C:\Users\Ott\source\repos\CellCounter\src\CellCounter\bin\Release\netstandard2.0\CellCounter.dll"
+#r @"C:\Users\Ott\source\repos\CellCounter\packages\NETStandard.Library\build\netstandard2.0\ref\netstandard.dll"
 
 open FSharp.Plotly
 open CounterFunctions
@@ -41,7 +41,8 @@ Pipeline.processImage filePath height width radius thresholdMultiplier
 filePath is the path of the image. Height and width can be filled with the same result from the Filter.squareCalculator. Radius gets the result from Filter.cellRadiusCalculator.
 thresholdMultiplier is a multiplier for the cutoff after the wavelet transformation. It has to be higher the closer in intensity the background to the cells is. The threshold function in the
 pipeline contains a boolean for determining whether the cells have a positive or negative value. In all cases so far the intensities were negative. If for some reason they are positive,
-the boolean has to be changed to "true". The chart which is returned in the resulting tuple serves visualization purposes. this functionality can be removed without consequences.
+the boolean has to be changed to "true". The chart which is returned in the resulting tuple serves visualization purposes. This functionality can be removed without consequences. To view the chart
+you have to open FSharp.Plotly and use the command Chart.Show.
 *)
 Pipeline.processImages folderPath height width radius thresholdMultiplier
 (**

@@ -1,9 +1,9 @@
 (*** hide ***)
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
-#r @"C:\Users\Student\source\repos\CellCounter\lib\Formatting\FSharp.Plotly.dll"
-#r @"C:\Users\Student\source\repos\CellCounter\src\CellCounter\bin\Release\netstandard2.0\CellCounter.dll"
-#r @"C:\Users\Student\source\repos\CellCounter\packages\NETStandard.Library\build\netstandard2.0\ref\netstandard.dll"
+#r @"C:\Users\Ott\source\repos\CellCounter\lib\Formatting\FSharp.Plotly.dll"
+#r @"C:\Users\Ott\source\repos\CellCounter\src\CellCounter\bin\Release\netstandard2.0\CellCounter.dll"
+#r @"C:\Users\Ott\source\repos\CellCounter\packages\NETStandard.Library\build\netstandard2.0\ref\netstandard.dll"
 
 open FSharp.Plotly
 open CounterFunctions
